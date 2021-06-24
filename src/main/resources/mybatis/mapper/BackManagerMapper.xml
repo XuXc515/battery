@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.BackManagerMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.BackManager">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="manager_id" property="managerId" jdbcType="VARCHAR"/>
+        <result column="manager_account" property="managerAccount" jdbcType="VARCHAR"/>
+        <result column="manager_password" property="managerPassword" jdbcType="VARCHAR"/>
+        <result column="manager_name" property="managerName" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="manager_status" property="managerStatus" jdbcType="VARCHAR"/>
+        <result column="manager_master" property="managerMaster" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+
+        <result column="id" property="role.id" jdbcType="INTEGER"/>
+        <result column="manager_role" property="role.managerRole" jdbcType="VARCHAR"/>
+        <result column="role_detail" property="role.roleDetail" jdbcType="VARCHAR"/>
+
+        <result column="id" property="roleBackManager.id" jdbcType="INTEGER"/>
+        <result column="role_id" property="roleBackManager.roleId" jdbcType="INTEGER"/>
+        <result column="manager_id" property="roleBackManager.managerId" jdbcType="INTEGER"/>
+        <result column="delete_status" property="roleBackManager.deleteStatus" jdbcType="INTEGER"/>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, manager_id, manager_account, manager_password, manager_name, email, mobile, manager_status,
+        manager_master, create_time, update_time, delete_time, delete_status
+    </sql>
+
+    <select id="findManagerByAccount" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_backmanager
+        WHERE manager_account=#{managerAccount} AND delete_status = 1;
+    </select>
+
+    <select id="findManagerById" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_backmanager
+        WHERE id=#{id} AND delete_status = 1;
+    </select>
+
+    <select id="managerLast" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_backmanager
+        ORDER BY id DESC limit 1;
+    </select>
+
+    <update id="updateManager">
+        UPDATE tb_backmanager
+        SET
+        manager_id=#{managerId},manager_account=#{managerAccount},manager_password=#{managerPassword},manager_name=#{managerName},email=#{email},mobile=#{mobile},manager_status=#{managerStatus},manager_master=#{managerMaster},update_time=NOW()
+        WHERE id=#{id}
+    </update>
+
+    <select id="findManagerRole" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_backmanager
+        WHERE manager_account=#{managerAccount} AND delete_status = 1;
+    </select>
+
+    <select id="queryPageManager" resultMap="BaseResultMap">
+        SELECT id,manager_id,manager_account,manager_name,email,mobile,manager_status,manager_master,create_time
+        FROM tb_backmanager
+        WHERE delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountManager" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_backmanager
+        WHERE delete_status = 1;
+    </select>
+
+    <select id="findSubByAccount" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_backmanager
+        WHERE manager_master=#{managerAccount} AND delete_status = 1;
+    </select>
+
+    <select id="querySubManager" resultMap="BaseResultMap">
+        SELECT id,manager_id,manager_account,manager_name,email,mobile,manager_status,manager_master,create_time
+        FROM tb_backmanager
+        WHERE manager_master=#{managerAccount} AND delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="querySubCountManager" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_backmanager
+        WHERE delete_status = 1;
+    </select>
+
+    <update id="updateSubStatus">
+        UPDATE tb_backmanager
+        SET manager_status=#{managerStatus} WHERE id=#{id}
+    </update>
+
+    <insert id="saveSubBackManager">
+        INSERT INTO tb_backmanager
+        (manager_id,manager_account,manager_password,manager_name,email,mobile,manager_status,manager_master,create_time)
+        VALUES
+        (#{managerId},#{managerAccount},#{managerPassword},#{managerName},#{email},#{mobile},#{managerStatus},#{managerMaster},NOW())
+    </insert>
+
+    <select id="findMasterByManagerMaster" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_backmanager
+        WHERE manager_master=#{managerMaster} AND delete_status = 1;
+    </select>
+
+    <select id="queryPageRole" resultMap="BaseResultMap">
+        SELECT a.manager_id,a.manager_account,b.manager_role,c.id
+        FROM tb_backmanager a,tb_role b,tb_role_backmanager c
+        WHERE a.id=c.manager_id AND b.id=c.role_id AND c.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountRole" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_backmanager a,tb_role b,tb_role_backmanager c
+        WHERE a.id=c.manager_id AND b.id=c.role_id AND c.delete_status = 1;
+    </select>
+
+    <select id="queryPageFindRole" resultMap="BaseResultMap">
+        SELECT a.manager_id,a.manager_account,b.manager_role,c.id
+        FROM tb_backmanager a,tb_role b,tb_role_backmanager c
+        WHERE a.id=c.manager_id AND b.id=c.role_id AND b.manager_role=#{managerRole} AND c.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountFindRole" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_backmanager a,tb_role b,tb_role_backmanager c
+        WHERE a.id=c.manager_id
+        AND b.id=c.role_id
+        AND b.manager_role=#{managerRole}
+        AND c.delete_status = 1;
+    </select>
+
+    <update id="deleteManager">
+        UPDATE tb_backmanager
+        SET delete_status = 0,delete_time = NOW()
+        WHERE id=#{id}
+    </update>
+
+    <update id="deleteAllManager" parameterType="java.lang.String">
+        UPDATE tb_backmanager
+        SET delete_status = 0,delete_time = NOW()
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

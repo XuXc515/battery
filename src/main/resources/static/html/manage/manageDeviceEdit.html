@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>类型修改</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <script src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <input type="hidden" id="bid"/>
+        <input type="hidden" id="tid"/>
+        <div class="layui-form-item">
+            <label for="batteryId" class="layui-form-label">
+                <span class="x-red">*</span>电池编号
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batteryId" name="batteryId" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="batteryV" class="layui-form-label">
+                <span class="x-red">*</span>电池电压
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batteryV" name="batteryV" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="batterySoc" class="layui-form-label">
+                <span class="x-red">*</span>电池SOC
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batterySoc" name="batterySoc" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="batteryHeight" class="layui-form-label">
+                <span class="x-red">*</span>电池高度
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batteryHeight" name="batteryHeight" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="batteryWidth" class="layui-form-label">
+                <span class="x-red">*</span>电池宽度
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batteryWidth" name="batteryWidth" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="batteryMaterial" class="layui-form-label">
+                <span class="x-red">*</span>电池材料
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batteryMaterial" name="batteryMaterial" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="batteryType" class="layui-form-label">
+                <span class="x-red">*</span>电池类型
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batteryType" name="batteryType" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="batteryAh" class="layui-form-label">
+                <span class="x-red">*</span>电池容量
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batteryAh" name="batteryAh" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="editBatteryType" class="layui-form-label">
+            </label>
+            <i type="button" id="editBatteryType" class="layui-icon layui-btn">修改</i>
+        </div>
+    </form>
+</div>
+<script src="../../js/jquery-3.5.1.js"></script>
+<script type="text/javascript">
+
+    // layui.use('laydate', function(){
+    //     var laydate = layui.laydate;
+    //
+    //     //执行一个laydate实例
+    //     laydate.render({
+    //         elem: '#updateTime' //指定元素
+    //     });
+    // });
+    //
+    // Date.prototype.format = function(fmt) {
+    //     var o = {
+    //         "M+" : this.getMonth()+1,                 //月份
+    //         "d+" : this.getDate(),                    //日
+    //         "h+" : this.getHours(),                   //小时
+    //         "m+" : this.getMinutes(),                 //分
+    //         "s+" : this.getSeconds(),                 //秒
+    //         "q+" : Math.floor((this.getMonth()+3)/3), //季度
+    //         "S"  : this.getMilliseconds()             //毫秒
+    //     };
+    //     if(/(y+)/.test(fmt)) {
+    //         fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    //     }
+    //     for(var k in o) {
+    //         if(new RegExp("("+ k +")").test(fmt)){
+    //             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+    //         }
+    //     }
+    //     return fmt;
+    // }
+    //
+    // $(document).ready(function() {
+    //     var bid = sessionStorage.getItem('editBId');
+    //     sessionStorage.removeItem('editBId');
+    //     var tid = sessionStorage.getItem('editTId');
+    //     sessionStorage.removeItem('editTId');
+    //     var name = sessionStorage.getItem('loginName');
+    //     var pwd = sessionStorage.getItem('loginPwd');
+    //     var token = localStorage.getItem("tokenId");
+    //     $.ajax({
+    //         url:'/manage/findTypeById',
+    //         type:"GET",
+    //         data:{'id':bid},
+    //         headers: {		//这里将存储的token取出发送至后端
+    //             TOKEN: token,
+    //             NAME:name,
+    //             PWD:pwd
+    //         },
+    //         success:function (data, textStatus, request) {
+    //             let tokenId = request.getResponseHeader("TOKEN")
+    //             window.localStorage.tokenId = tokenId;
+    //
+    //             $("#bid").val(data.id);
+    //             $("#tid").val(data.batteryType.id);
+    //             $("#batteryId").val(data.deviceId)
+    //             $("#batteryV").val(data.batteryType.batteryV)
+    //             $("#batterySoc").val(data.batteryType.batterySoc)
+    //             $("#batteryHeight").val(data.batteryType.deviceHeight)
+    //             $("#batteryWidth").val(data.batteryType.deviceWidth)
+    //             $("#batteryMaterial").val(data.batteryType.deviceMaterial)
+    //             $("#batteryType").val(data.batteryType.batteryType)
+    //             $("#batteryAh").val(data.batteryType.batteryAh)
+    //         }
+    //     });
+    // });
+    //
+    // $(function(){
+    //     $("#editBatteryType").click(function(){
+    //         var bid = $("#bid").val();
+    //         var tid =  $("#tid").val();
+    //         var batteryId =  $("#batteryId").val();
+    //         var batteryV =  $("#batteryV").val();
+    //         var batterySoc =  $("#batterySoc").val();
+    //         var batteryHeight =  $("#batteryHeight").val();
+    //         var batteryWidth =  $("#batteryWidth").val();
+    //         var batteryMaterial =  $("#batteryMaterial").val();
+    //         var batteryType =  $("#batteryType").val();
+    //         var batteryAh =  $("#batteryAh").val();
+    //
+    //         var name = sessionStorage.getItem('loginName');
+    //         var pwd = sessionStorage.getItem('loginPwd');
+    //         var token = localStorage.getItem("tokenId");
+    //         $.ajax({
+    //             url:'/manage/changeType',
+    //             type:"POST",
+    //             data:{_method:'PUT','id':tid,'typeId':typeId,'batteryId':batteryId,'batteryV':batteryV,'batterySoc':batterySoc,'batteryHeight':batteryHeight,
+    //                 'batteryWidth':batteryWidth,'batteryMaterial':batteryMaterial,'batteryType':batteryType,'batteryAh':batteryAh,'updateTime':updateTime},
+    //             headers: {		//这里将存储的token取出发送至后端
+    //                 TOKEN: token,
+    //                 NAME:name,
+    //                 PWD:pwd
+    //             },
+    //             success:function (data, textStatus, request) {
+    //
+    //                 let tokenId = request.getResponseHeader("TOKEN")
+    //                 window.localStorage.tokenId = tokenId;
+    //
+    //                 layer.alert(data,function(index){
+    //                     x_admin_close();
+    //                 });
+    //
+    //             }
+    //         });
+    //     })
+    // })
+    //
+    // /*关闭弹出框口*/
+    // function x_admin_close() {
+    //     var index = parent.layer.getFrameIndex(window.name);
+    //     parent.layer.close(index);
+    // };
+
+</script>
+</body>
+</html>

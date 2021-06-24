@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.Role">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="manager_role" property="managerRole" jdbcType="VARCHAR"/>
+        <result column="role_detail" property="roleDetail" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, manager_role, role_detail, create_time, update_time, delete_time, delete_status
+    </sql>
+
+    <select id="findRoleByAccount" resultMap="BaseResultMap">
+        SELECT r.id,r.manager_role,r.role_detail
+        FROM tb_role r
+        LEFT JOIN tb_role_backmanager rb
+        ON (r.id = rb.role_id)
+        LEFT JOIN tb_backmanager b
+        ON (b.id = rb.manager_id)
+        WHERE b.manager_account = #{managerAccount}
+    </select>
+
+    <select id="findRoleIdByRoleName" resultType="java.lang.Integer">
+        SELECT id
+        FROM tb_role
+        WHERE manager_role=#{managerRole}
+    </select>
+
+    <insert id="addRole">
+        INSERT INTO tb_role (manager_role,role_detail,create_time)
+        VALUES (#{managerRole},#{roleDetail},NOW())
+    </insert>
+
+    <select id="findIdByRoleName" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_role
+        WHERE manager_role=#{managerRole}
+    </select>
+
+</mapper>

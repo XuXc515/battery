@@ -1,0 +1,18 @@
+var data_en = {
+    "title": "SIM Management",
+    "name": "SIM Management",
+    "name1": "SIMId",
+    "name2": "StatusId",
+    "name3": "Batch Deletion",
+    "name4": "Add",
+    "table1": "BatteryId",
+    "table2": "BatteryStatus",
+    "table3": "BatteryVoltage",
+    "table4": "BatteryTemperature",
+    "table5": "LoadCurrent",
+    "table6": "ConnectStatus",
+    "table7": "ChargeStatus",
+    "table8": "WorkStatus",
+    "table9": "updateTime",
+    "table10": "Operation",
+};

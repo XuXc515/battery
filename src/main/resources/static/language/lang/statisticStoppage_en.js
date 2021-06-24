@@ -1,0 +1,15 @@
+var data_en = {
+    "title": "Stoppage Report",
+    "name": "Stoppage Report",
+    "name1": "Type Id",
+    "table1": "TypeId",
+    "table2": "BatteryId",
+    "table3": "BatteryV",
+    "table4": "BatterySoc",
+    "table5": "BatteryHeight",
+    "table6": "BatteryWidth",
+    "table7": "BatteryMaterial",
+    "table8": "BatteryType",
+    "table9": "BatteryAh",
+    "table10": "updateTime",
+};

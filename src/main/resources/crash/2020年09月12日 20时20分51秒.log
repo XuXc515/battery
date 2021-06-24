@@ -1,0 +1,46 @@
+BOARD=YAL
+CPU_ABI2=
+HOST=cn-central-1b-9e6a65c311596523367901-2368177958-q4bjd
+versionName=1.0
+SUPPORTED_64_BIT_ABIS=[Ljava.lang.String;@b633c84
+CPU_ABI=arm64-v8a
+PERMISSIONS_REVIEW_REQUIRED=true
+DISPLAY=YAL-AL00 10.1.0.162(C00E160R4P11)
+SUPPORTED_ABIS=[Ljava.lang.String;@7c92c6d
+FINGERPRINTEX=HONOR/YAL-AL00/HWYAL:10/HUAWEIYAL-AL00/10.1.0.162C00:user/release-keys
+FINGERPRINT=HONOR/YAL-AL00/HWYAL:10/HUAWEIYAL-AL00/10.1.0.162C00:user/release-keys
+PRODUCT=YAL-AL00
+ID=HUAWEIYAL-AL00
+HWFINGERPRINT=///YAL-LGRP1-CHN 10.1.0.162/YAL-AL00-CUST 10.1.0.160(C00)/YAL-AL00-PRELOAD 10.0.0.11(C00R4)//
+TYPE=user
+SERIAL=unknown
+DEVICE=HWYAL
+TIME=1596527060000
+MODEL=YAL-AL00
+MANUFACTURER=HUAWEI
+USER=test
+versionCode=1
+BRAND=HONOR
+SUPPORTED_32_BIT_ABIS=[Ljava.lang.String;@68fb297
+HARDWARE=kirin980
+IS_DEBUGGABLE=false
+BOOTLOADER=unknown
+RADIO=unknown
+UNKNOWN=unknown
+IS_EMULATOR=false
+TAGS=release-keys
+java.lang.NullPointerException: trustManager == null
+	at okhttp3.OkHttpClient$Builder.sslSocketFactory(OkHttpClient.java:693)
+	at com.example.battery.util.HttpUtil.sendOkHttpResponse(HttpUtil.java:125)
+	at com.example.battery.MainActivity.onClick(MainActivity.java:124)
+	at android.view.View.performClick(View.java:7217)
+	at android.view.View.performClickInternal(View.java:7191)
+	at android.view.View.access$3500(View.java:828)
+	at android.view.View$PerformClick.run(View.java:27679)
+	at android.os.Handler.handleCallback(Handler.java:900)
+	at android.os.Handler.dispatchMessage(Handler.java:103)
+	at android.os.Looper.loop(Looper.java:219)
+	at android.app.ActivityThread.main(ActivityThread.java:8347)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:513)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1055)

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="user_account" property="userAccount" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+        <result column="user_photo" property="userPhoto" jdbcType="VARCHAR"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="sex" property="sex" jdbcType="VARCHAR"/>
+        <result column="balance" property="balance" jdbcType="DECIMAL"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="user_role" property="userRole" jdbcType="VARCHAR"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, user_account, user_name, user_password, user_photo, age, sex, balance, mobile, address,
+        create_time, update_time, delete_time, user_role, delete_status
+    </sql>
+
+    <!--  CostController-->
+    <select id="queryPageArrearsUser" resultMap="BaseResultMap">
+        SELECT id,user_id,user_account,user_name,mobile,address,balance
+        FROM tb_user
+        WHERE balance &lt; 0 AND delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountArrearsUser" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE balance &lt; 0 AND delete_status = 1;
+    </select>
+
+    <select id="findArrearsUserByUserIdAndAccount" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_user
+        WHERE user_id=#{userId} AND user_account=#{userAccount} AND balance &lt; 0 AND delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="findArrearsUserByUserIdAndAccountCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE user_id=#{userId} AND user_account=#{userAccount} AND balance &lt; 0 AND delete_status = 1
+    </select>
+
+    <select id="findArrearsById" resultMap="BaseResultMap">
+        SELECT id,user_id,user_account,user_name,mobile,address,balance
+        FROM tb_user
+        WHERE id=#{id} AND delete_status = 1;
+    </select>
+
+    <update id="updateArrears">
+        UPDATE tb_user SET balance=#{balance}, update_time=NOW() WHERE id=#{id}
+    </update>
+
+    <update id="deleteArrears">
+        UPDATE tb_user SET delete_status = 0, delete_time=NOW() WHERE id=#{id}
+    </update>
+
+
+    <!--  UserController-->
+
+    <select id="userLogin" resultMap="BaseResultMap">
+        SELECT id,user_id, user_account, user_name, user_password, user_photo, age, sex, balance, mobile, address
+        FROM tb_user
+        WHERE user_account=#{userAccount} AND user_password=#{userPassword} AND delete_status = 1;
+    </select>
+
+    <select id="findBySign" resultMap="BaseResultMap">
+        SELECT id,user_id, user_account, user_name, user_password, age, sex, balance, mobile, address
+        FROM tb_user
+        WHERE user_account=#{userAccount} AND delete_status = 1;
+    </select>
+
+    <select id="userIdBySign" resultMap="BaseResultMap">
+        SELECT user_id
+        FROM tb_user
+        ORDER BY id DESC limit 1;
+    </select>
+
+    <insert id="userSign">
+        INSERT INTO tb_user(user_id,user_account,user_password,create_time)
+        VALUES (#{userId},#{userAccount},#{userPassword},NOW());
+    </insert>
+
+    <update id="changeSelf">
+        UPDATE tb_user
+        SET
+        user_name=#{userName},sex=#{sex},mobile=#{mobile},address=#{address},user_photo=#{userPhoto},update_time=NOW()
+        WHERE user_account=#{userAccount}
+    </update>
+
+    <select id="queryPageUser" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_user
+        WHERE delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountUser" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE delete_status = 1;
+    </select>
+
+    <select id="findUserById" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_user
+        WHERE id=#{id} AND delete_status = 1;
+    </select>
+
+    <select id="findUserByAccount" resultMap="BaseResultMap">
+        SELECT id,user_id, user_account, user_name, user_password, user_photo, age, sex, balance, mobile, address
+        FROM tb_user
+        WHERE user_account=#{userAccount} AND delete_status = 1;
+    </select>
+
+    <select id="findUserByDate" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_user
+        WHERE create_time &gt; #{start}
+        AND create_time &lt; #{end}
+        AND user_id=#{userId}
+        AND delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="findUserByDateCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE create_time &gt; #{start}
+        AND create_time &lt; #{end}
+        AND user_id=#{userId}
+        AND delete_status = 1;
+    </select>
+
+    <update id="updateUser">
+        UPDATE tb_user
+        SET
+        user_id=#{userId},user_account=#{userAccount},user_name=#{userName},user_password=#{userPassword},age=#{age},sex=#{sex},balance=#{balance},mobile=#{mobile},address=#{address},update_time=NOW()
+        WHERE id=#{id}
+    </update>
+
+    <insert id="saveUser">
+        INSERT INTO tb_user (user_id,user_account,user_name,user_password,age,sex,balance,mobile,address,create_time)
+        VALUES
+        (#{userId},#{userAccount},#{userName},#{userPassword},#{age},#{sex},#{balance},#{mobile},#{address},NOW())
+    </insert>
+
+    <update id="deleteUser">
+        UPDATE tb_user
+        SET delete_status = 0,delete_time = NOW()
+        WHERE id=#{id};
+    </update>
+
+    <update id="deleteAll" parameterType="java.lang.String">
+        UPDATE tb_user
+        SET delete_status = 0,delete_time = NOW()
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="userAll" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_user
+        WHERE delete_status = 1
+    </select>
+
+    <select id="userCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user;
+    </select>
+
+    <select id="userActiveCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE delete_status = 1;
+    </select>
+
+    <select id="userArrearsCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user
+        WHERE delete_status = 1 AND balance &lt; 0;
+    </select>
+
+    <update id="rechargeUserBalance">
+        UPDATE tb_user
+        SET balance = balance + #{balance},update_time = NOW()
+        WHERE user_account=#{userAccount} AND delete_status = 1;
+    </update>
+
+    <update id="expendUserBalance">
+        UPDATE tb_user
+        SET balance = balance - #{balance},update_time = NOW()
+        WHERE user_account=#{userAccount} AND delete_status = 1;
+    </update>
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.BatteryStatusMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.BatteryStatus">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="status_id" property="statusId" jdbcType="VARCHAR"/>
+        <result column="battery_status" property="batteryStatus" jdbcType="VARCHAR"/>
+        <result column="battery_voltage" property="batteryVoltage" jdbcType="VARCHAR"/>
+        <result column="battery_temperature" property="batteryTemperature" jdbcType="VARCHAR"/>
+        <result column="load_current" property="loadCurrent" jdbcType="VARCHAR"/>
+        <result column="connect_status" property="connectStatus" jdbcType="VARCHAR"/>
+        <result column="charge_status" property="chargeStatus" jdbcType="VARCHAR"/>
+        <result column="work_status" property="workStatus" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, status_id, battery_status, battery_voltage, battery_temperature, load_current,
+        connect_status, charge_status, work_status, create_time, update_time, delete_time,
+        delete_status
+    </sql>
+
+    <insert id="insertBatteryStatusList" parameterType="BatteryStatus">
+        INSERT INTO tb_batterystatus(
+        status_id,battery_status,battery_voltage,
+        battery_temperature,load_current,connect_status,
+        charge_status,work_status,create_time,update_time,delete_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.statusId},#{item.batteryStatus},
+            #{item.batteryVoltage},#{item.batteryTemperature},#{item.loadCurrent},
+            #{item.connectStatus},#{item.chargeStatus},#{item.workStatus},
+            #{item.createTime},#{item.updateTime},#{item.deleteTime}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        status_id = VALUES(status_id),battery_status = VALUES(battery_status),
+        battery_voltage = VALUES(battery_voltage),battery_temperature = VALUES(battery_temperature),load_current =
+        VALUES(load_current),
+        connect_status = VALUES(connect_status),charge_status = VALUES(charge_status),work_status = VALUES(work_status),
+        create_time = VALUES(create_time),update_time = VALUES(update_time),delete_time = VALUES(delete_time)
+    </insert>
+
+    <!--  status_id = #{statusId},device_id = #{deviceId},battery_status = #{batteryStatus},-->
+    <!--  battery_voltage = #{batteryVoltage},battery_temperature = #{batteryTemperature},load_current = #{loadCurrent},-->
+    <!--  connect_status = #{connectStatus},charge_status = #{chargeStatus},work_status = #{workStatus},-->
+    <!--  create_time =  #{createTime},update_time = #{updateTime},delete_time = #{deleteTime}-->
+
+    <select id="queryPageBatteryStatus" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_batterystatus
+        WHERE delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountBatteryStatus" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_batterystatus
+        WHERE delete_status = 1;
+    </select>
+
+
+    <select id="findBatteryStatusByStatusId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_batterystatus
+        WHERE status_id=#{statusId}
+    </select>
+
+    <insert id="saveDeviceStatus">
+        INSERT INTO tb_batterystatus
+        (status_id,battery_status,battery_voltage,battery_temperature,load_current,connect_status,charge_status,work_status,create_time)
+        VALUES
+        (#{statusId},#{batteryStatus},#{batteryVoltage},#{batteryTemperature},#{loadCurrent},#{connectStatus},#{chargeStatus},#{workStatus},NOW())
+    </insert>
+
+    <update id="updateDeviceStatus">
+        UPDATE tb_batterystatus
+        SET
+        battery_status=#{batteryStatus},battery_voltage=#{batteryVoltage},battery_temperature=#{batteryTemperature},load_current=#{loadCurrent},connect_status=#{connectStatus},charge_status=#{chargeStatus},work_status=#{workStatus},update_time=NOW()
+        WHERE status_id=#{statusId}
+    </update>
+
+
+</mapper>

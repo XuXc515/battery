@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.RechargeMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.Recharge">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="recharge_id" property="rechargeId" jdbcType="VARCHAR"/>
+        <result column="user_account" property="userAccount" jdbcType="VARCHAR"/>
+        <result column="pay_method" property="payMethod" jdbcType="VARCHAR"/>
+        <result column="pay_status" property="payStatus" jdbcType="VARCHAR"/>
+        <result column="order_detail" property="orderDetail" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, recharge_id, user_account, pay_method, pay_status, order_detail, create_time, update_time, delete_time,
+        price, delete_status
+    </sql>
+
+
+    <select id="queryPageRecharge" resultMap="BaseResultMap">
+        SELECT user_account,create_time,price
+        FROM tb_recharge
+        WHERE delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountRecharge" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM tb_recharge WHERE delete_status = 1;
+    </select>
+
+    <select id="findByDateRecharge" resultMap="BaseResultMap">
+        SELECT user_account,create_time,price
+        FROM tb_recharge
+        WHERE create_time &gt; #{start}
+        AND create_time &lt; #{end}
+        AND user_account=#{userAccount}
+        AND delete_status = 1;
+    </select>
+
+    <select id="findByDateRechargeCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_recharge
+        WHERE create_time &gt; #{start}
+        AND create_time &lt; #{end}
+        AND user_account=#{userAccount}
+        AND delete_status = 1;
+    </select>
+
+    <select id="findLastRechargeId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_recharge
+        ORDER BY id DESC limit 1;
+    </select>
+
+    <insert id="saveRechargeOrder">
+        INSERT INTO tb_recharge (recharge_id,user_account,price,create_time)
+        VALUES (#{rechargeId},#{userAccount},#{price},NOW())
+    </insert>
+
+    <update id="changeRechargeOrder">
+        UPDATE tb_recharge
+        SET pay_status='已支付', update_time=NOW()
+        WHERE recharge_id=#{rechargeId}
+    </update>
+
+    <select id="rechargeByOrderId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_recharge
+        WHERE recharge_id=#{rechargeId} AND delete_status = 1;
+    </select>
+
+    <update id="deleteRechargeOrder">
+        UPDATE tb_recharge
+        SET delete_status = 0, delete_time=NOW()
+        WHERE recharge_id=#{rechargeId}
+    </update>
+
+    <select id="findRechargeByAccount" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_recharge
+        WHERE delete_status = 1 AND user_account=#{userAccount}
+    </select>
+
+    <select id="findRechargeByRechargeId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_recharge
+        WHERE recharge_id=#{rechargeId} AND delete_status = 1;
+    </select>
+
+</mapper>

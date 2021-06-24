@@ -1,0 +1,17 @@
+var data_ch = {
+    "title": "申请审核",
+    "startDate": "开始日期",
+    "endDate": "截止日期",
+    "name": "申请审核",
+    "name1": "申请状态",
+    "name2": "待确认",
+    "name3": "已确认",
+    "name4": "已取消",
+    "name5": "申请编号",
+    "name6": "用户账户",
+    "table1": "用户编号",
+    "table2": "用户账户",
+    "table3": "用户密码",
+    "table4": "日期",
+    "table5": "操作",
+};

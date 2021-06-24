@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title data-action="title">Sub-User</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi">
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <link rel="stylesheet" href="../lib/layui/css/layui.css" media="all">
+    <script src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        #txtTask {
+            float: left;
+            min-width: 85%;
+        }
+
+        ul {
+            list-style: none;
+            margin: 0px;
+            padding: 0px;
+
+        }
+
+        ul li {
+            margin-left: 0px;
+        }
+
+        ul li a {
+            display: block;
+            height: 30px;
+            width: 80px;
+            line-height: 30px;
+            text-decoration: none;
+            padding-left: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a><cite data-action="name">Sub-User</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="Refresh">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+</div>
+
+
+<!--        <div class="layui-container">-->
+<div class="layui-row">
+    <div class="layui-col-md3">
+        <div class="grid-demo" style="margin-left: 20px">
+            <form>
+                <div class="layui-inline">
+                    <input id="txtAccount" type="text" name="orderId" data-action="name1" placeholder="ManagerAccount"
+                           autocomplete="off" class="layui-input" required>
+                </div>
+                <i type="button" id="search" class="layui-icon layui-btn">&#xe615;</i>
+            </form>
+            <div id="tree">
+                <ul>
+                    <li>
+                        <a href="#">
+                            <!--                                        <i class="iconfont">&#xe6a6;</i>-->
+                            <i id="head"></i>
+                        </a>
+                        <ul id="content">
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md9">
+        <div class="grid-demo grid-demo-bg1">
+            <xblock>
+                <!--        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>-->
+                <button id="test2" class="layui-btn" onclick="x_add_show('Add','user/userSubAdd.html')"><i
+                        class="layui-icon"></i><span data-action="name2">Add</span></button>
+                <!--        <span class="x-right" style="line-height:40px">共有数据：88 条</span>-->
+            </xblock>
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" class="layui-unselect header layui-form-checkbox" lay-skin="primary">
+                    </th>
+                    <th style="display:none;">id</th>
+                    <th data-action="table1">ManagerId</th>
+                    <th data-action="table2">ManagerAccount</th>
+                    <th data-action="table3">ManagerName</th>
+                    <th data-action="table4">Email</th>
+                    <th data-action="table5">Mobile</th>
+                    <th data-action="table6">Master</th>
+                    <th data-action="table7">CreateTime</th>
+                    <th data-action="table8">Status</th>
+                    <th data-action="table9">Operation</th>
+                </tr>
+                </thead>
+                <tbody id="tableContent"></tbody>
+            </table>
+            <div id="demo8" style="text-align: center;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份
+            "d+": this.getDate(),                    //日
+            "h+": this.getHours(),                   //小时
+            "m+": this.getMinutes(),                 //分
+            "s+": this.getSeconds(),                 //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return fmt;
+    }
+
+
+    $("#search").click(function () {
+        var userAccount = $("#txtAccount").val();
+        sessionStorage.setItem("userSubName", userAccount);
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "用户账户为空";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Empty ManagerAccount";
+            alertTip = "Permission Denied！";
+        }
+
+        if (userAccount == "")
+            layer.alert(tip1);
+        else {
+
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+
+            $("#head").text(userAccount);
+            $.ajax({
+                url: '/backManager/subBackManager',
+                type: "GET",
+                data: {'account': userAccount},
+                headers: {		//这里将存储的token取出发送至后端
+                    TOKEN: token,
+                    NAME: name,
+                    PWD: pwd,
+                    LANG: currLang
+                },
+                success: function (data, textStatus, request) {
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    if (data.msg != alertTip) {
+
+                        $("#content").empty();
+                        var htmlStr = "";
+                        for (var i = 0; i < data.length; i++) {
+                            htmlStr += '<li>';
+                            htmlStr += "<a href=\"#\">";
+                            htmlStr += "<i class=\"iconfont\">&#xe6a7;</i>";
+                            htmlStr += data[i].managerAccount;
+                            htmlStr += '</a></li>';
+                        }
+                        $("#content").append(htmlStr);
+                        searchFenye();
+
+                    } else {
+                        layer.alert(data.msg);
+                    }
+
+                },
+                error: function (xhr) {
+                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                    if (xhr.status == 401) {
+                        layer.alert(obj.msg, function (index) {
+                            top.location.href = '../login.html'
+                        });
+                    }
+                }
+            });
+        }
+
+    });
+
+    // 分页
+    function searchFenye() {
+
+        var currLang = localStorage.currentLang;
+        var alertTip;
+        if (currLang == "ch") {
+            alertTip = "你没有权限！";
+        } else {
+            alertTip = "Permission Denied！";
+        }
+
+        layui.use(['laypage', 'layer'], function () {
+            var laypage = layui.laypage
+                , layer = layui.layer;
+            //自定义排版
+            var account = sessionStorage.getItem("userSubName");
+            sessionStorage.removeItem("userSubName");
+
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {'curr': 1, 'limit': 10, 'account': account,},
+                url: '/backManager/subTable',
+                headers: {		//这里将存储的token取出发送至后端
+                    TOKEN: token,
+                    NAME: name,
+                    PWD: pwd,
+                    LANG: currLang
+                },
+                success: function (data, textStatus, request) {
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    if (data.msg != alertTip) {
+                        showData(data);
+                    } else {
+                        // layer.alert(data.msg);
+                    }
+                    laypage.render({
+                        elem: 'demo8'
+                        , count: data.ct
+                        , layout: ['limit', 'prev', 'page', 'next']
+                        , jump: function (obj) {
+                            //分页切换的回掉
+                            var token1 = localStorage.getItem("tokenId");
+                            $.ajax({
+                                type: 'post',
+                                dataType: 'json',
+                                data: {'curr': obj.curr, 'limit': obj.limit, 'account': account},
+                                url: '/backManager/subTable',
+                                headers: {		//这里将存储的token取出发送至后端
+                                    TOKEN: token1,
+                                    NAME: name,
+                                    PWD: pwd,
+                                    LANG: currLang
+                                },
+                                success: function (data, textStatus, request) {
+                                    let tokenId = request.getResponseHeader("TOKEN")
+                                    window.localStorage.tokenId = tokenId;
+
+                                    if (data.msg != alertTip) {
+                                        showData(data);
+                                    } else {
+                                        layer.alert(data.msg);
+                                    }
+                                },
+                                error: function (xhr) {
+                                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                    if (xhr.status == 401) {
+                                        layer.alert(obj.msg, function (index) {
+                                            top.location.href = '../login.html'
+                                        });
+                                    }
+                                }
+                            })
+                        }
+                    });
+                },
+                error: function (xhr) {
+                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                    if (xhr.status == 401) {
+                        layer.alert(obj.msg, function (index) {
+                            top.location.href = '../login.html'
+                        });
+                    }
+                }
+            })
+
+        });
+    }
+
+    // 分页
+    $(function () {
+        fenye();
+    })
+
+
+    function fenye() {
+
+        var currLang = localStorage.currentLang;
+        var alertTip;
+        if (currLang == "ch") {
+            alertTip = "你没有权限！";
+        } else {
+            alertTip = "Permission Denied！";
+        }
+
+        layui.use(['laypage', 'layer'], function () {
+            var laypage = layui.laypage
+                , layer = layui.layer;
+            //自定义排版
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {'curr': 1, 'limit': 10},
+                url: '/backManager/subs',
+                headers: {		//这里将存储的token取出发送至后端
+                    TOKEN: token,
+                    NAME: name,
+                    PWD: pwd,
+                    LANG: currLang
+                },
+                success: function (data, textStatus, request) {
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    if (data.msg != alertTip) {
+                        showData(data);
+                    } else {
+                        // layer.alert(data.msg);
+                    }
+                    laypage.render({
+                        elem: 'demo8'
+                        , count: data.ct
+                        , layout: ['limit', 'prev', 'page', 'next']
+                        , jump: function (obj) {
+                            //分页切换的回掉
+                            var token1 = localStorage.getItem("tokenId");
+                            $.ajax({
+                                type: 'post',
+                                dataType: 'json',
+                                data: {'curr': obj.curr, 'limit': obj.limit},
+                                url: '/backManager/subs',
+                                headers: {		//这里将存储的token取出发送至后端
+                                    TOKEN: token1,
+                                    NAME: name,
+                                    PWD: pwd,
+                                    LANG: currLang
+                                },
+                                success: function (data, textStatus, request) {
+                                    let tokenId = request.getResponseHeader("TOKEN")
+                                    window.localStorage.tokenId = tokenId;
+
+                                    if (data.msg != alertTip) {
+
+
+                                        var head = "root";
+                                        var roleName = "none";
+
+                                        $("#head").text(head);
+                                        $.ajax({
+                                            url: '/backManager/subMaster',
+                                            type: "GET",
+                                            data: {'account': roleName},
+                                            headers: {		//这里将存储的token取出发送至后端
+                                                TOKEN: token,
+                                                NAME: name,
+                                                PWD: pwd,
+                                                LANG: currLang
+                                            },
+                                            success: function (data, textStatus, request) {
+                                                let tokenId = request.getResponseHeader("TOKEN")
+                                                window.localStorage.tokenId = tokenId;
+
+                                                if (data.msg != alertTip) {
+
+                                                    $("#content").empty();
+                                                    var htmlStr = "";
+                                                    for (var i = 0; i < data.length; i++) {
+                                                        htmlStr += '<li>';
+                                                        htmlStr += "<a href=\"#\">";
+                                                        htmlStr += "<i class=\"iconfont\">&#xe6a7;</i>";
+                                                        htmlStr += data[i].managerAccount;
+                                                        htmlStr += '</a></li>';
+                                                    }
+                                                    $("#content").append(htmlStr);
+
+                                                } else {
+                                                    layer.alert(data.msg);
+                                                }
+
+                                            },
+                                            error: function (xhr) {
+                                                var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                                if (xhr.status == 401) {
+                                                    layer.alert(obj.msg, function (index) {
+                                                        top.location.href = '../login.html'
+                                                    });
+                                                }
+                                            }
+                                        });
+                                        showData(data);
+                                    } else {
+                                        layer.alert(data.msg);
+                                    }
+                                },
+                                error: function (xhr) {
+                                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                    if (xhr.status == 401) {
+                                        layer.alert(obj.msg, function (index) {
+                                            top.location.href = '../login.html'
+                                        });
+                                    }
+                                }
+                            })
+                        }
+                    });
+                },
+                error: function (xhr) {
+                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                    if (xhr.status == 401) {
+                        layer.alert(obj.msg, function (index) {
+                            top.location.href = '../login.html'
+                        });
+                    }
+                }
+            })
+        });
+    }
+
+    function showData(ds) {
+        $("#tableContent").empty();
+        var htmlStr = "";
+        for (var i = 0; i < ds.data.length; i++) {
+            var time = new Date(ds.data[i].createTime).format("yyyy-MM-dd");
+            htmlStr += '<tr><td>';
+            htmlStr += "<input id='i' type=\"checkbox\" class=\"layui-unselect layui-form-checkbox\" lay-skin=\"primary\">"
+            htmlStr += '</td><td style="display:none;">';
+            htmlStr += ds.data[i].id;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].managerId;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].managerAccount;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].managerName;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].email;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].mobile;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].managerMaster;
+            htmlStr += '</td><td>';
+            htmlStr += time;
+            htmlStr += '</td><td class="td-status">';
+            htmlStr += "<span class=\"layui-btn layui-btn-normal layui-btn-mini\">"
+            htmlStr += ds.data[i].managerStatus;
+            htmlStr += "</span>"
+            htmlStr += '</td><td>';
+            htmlStr += "<a class=\"layui-icon\" title=\"change\" onclick=\"member_stop(this,'10001')\" href=\"javascript:;\" id=\"batteryStatus\">&#xe601;</a>"
+            htmlStr += '</td></tr>'
+
+        }
+        $("#tableContent").append(htmlStr);
+        var tx = $("#tableContent").find("tr").find(".td-status").find('span');
+        btnStatus(tx);
+    }
+
+    //设置初始状态颜色
+    function btnStatus(obj) {
+        var arr = [];
+        for (var i = 0; i < obj.length; i++) {
+            arr[i] = obj[i];
+            var tx = $(arr[i]).text();
+            if (tx == 'Unused') {
+                $(arr[i]).addClass('layui-btn-disabled');
+            }
+
+        }
+    }
+
+    /*用户-停用*/
+    function member_stop(obj, id) {
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var tip2;
+        var tip3;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "你确定要更改吗？";
+            tip2 = "已停用!";
+            tip3 = "已启用!";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Are you sure you want to change？";
+            tip2 = "terminated!";
+            tip3 = "activated!";
+            alertTip = "Permission Denied！";
+        }
+
+        var arr = "";
+        var drr = [];
+        var td = obj.parentNode.parentNode;
+        $(td).each(function () {
+            var res = $(this).children('td').eq(9).html();
+            var des = $(this).children('td').eq(1).html();
+            arr = res;
+            drr.push(des);
+        })
+
+        var div = document.createElement('div');
+        div.innerHTML = arr;
+        var span = div.childNodes[0];
+        var tt = $(span).text();
+
+        var bid = Number(drr);
+
+
+        layer.confirm(tip1, function (index) {
+            if (tt == 'Using') {
+
+                // var s1 = $(obj).parents("tr").find(".td-status").find('span').html();
+                var s1 = 'Unused';
+                var name = sessionStorage.getItem('loginName');
+                var pwd = sessionStorage.getItem('loginPwd');
+                var token = localStorage.getItem("tokenId");
+                var currLang = localStorage.currentLang;
+
+                $.ajax({
+                    url: '/backManager/subStatus',
+                    type: "POST",
+                    data: {_method: "PUT", 'id': bid, 'managerStatus': s1},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    success: function (data, textStatus, request) {
+
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        if (data.msg != alertTip) {
+                            //发异步把用户状态进行更改
+                            $(obj).attr('value', 'Unused')
+                            $(obj).find('i').html('&#xe62f;');
+                            $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('Unused');
+                            layer.msg(tip2, {icon: 5, time: 1000});
+                        } else {
+                            layer.alert(data.msg);
+                        }
+
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../login.html'
+                            });
+                        }
+                    }
+                });
+            } else {
+
+                // var s2 = $(obj).parents("tr").find(".td-status").find('span').html();
+                var s2 = 'Using';
+                var name = sessionStorage.getItem('loginName');
+                var pwd = sessionStorage.getItem('loginPwd');
+                var token = localStorage.getItem("tokenId");
+                var currLang = localStorage.currentLang;
+
+                $.ajax({
+                    url: '/backManager/subStatus',
+                    type: "POST",
+                    data: {_method: "PUT", 'id': bid, 'managerStatus': s2},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    success: function (data, textStatus, request) {
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        if (data.msg != alertTip) {
+                            //发异步把用户状态进行更改
+                            $(obj).attr('value', 'Using')
+                            $(obj).find('i').html('&#xe601;');
+                            $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('Using');
+                            layer.msg(tip3, {icon: 6, time: 1000});
+                        } else {
+                            layer.alert(data.msg);
+                        }
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../login.html'
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    //添加弹出层
+    function x_add_show(title, url, w, h) {
+
+        var currLang = localStorage.currentLang;
+        if (currLang == "ch")
+            title = "添加";
+        else
+            title = "Add";
+
+        if (title == null || title == '') {
+            title = false;
+        }
+        ;
+        if (url == null || url == '') {
+            url = "404.html";
+        }
+        ;
+        if (w == null || w == '') {
+            w = ($(window).width() * 0.6);
+        }
+        ;
+        if (h == null || h == '') {
+            h = ($(window).height() - 120);
+        }
+        ;
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade: 0.4,
+            title: title,
+            content: url
+        });
+    }
+
+    /*关闭弹出框口*/
+    function x_admin_close() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+
+    //JS文本翻译
+    $(function () {
+        //获取语言
+        var currLang = localStorage.currentLang;
+        //定义多语言数组
+        var msg = new Array();
+        //定义多语言中文
+        msg["ch"] = "一二";
+        //定义多语言英文
+        msg["en"] = "AAAA";
+        // console.log(msg[currLang]);
+    });
+
+</script>
+<script type="text/javascript" src="../language/lang_switch.js"></script>
+<script type="text/javascript" src="../language/lang/userSub_ch.js"></script>
+<script type="text/javascript" src="../language/lang/userSub_en.js"></script>
+</body>
+</html>

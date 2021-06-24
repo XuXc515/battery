@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.BatteryTypeMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.BatteryType">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="type_id" property="typeId" jdbcType="VARCHAR"/>
+        <result column="battery_V" property="batteryV" jdbcType="VARCHAR"/>
+        <result column="battery_SOC" property="batterySoc" jdbcType="VARCHAR"/>
+        <result column="device_height" property="deviceHeight" jdbcType="VARCHAR"/>
+        <result column="device_width" property="deviceWidth" jdbcType="VARCHAR"/>
+        <result column="device_material" property="deviceMaterial" jdbcType="VARCHAR"/>
+        <result column="battery_type" property="batteryType" jdbcType="VARCHAR"/>
+        <result column="battery_AH" property="batteryAh" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, type_id, battery_V, battery_SOC, device_height, device_width, device_material,
+        battery_type, battery_AH, create_time, update_time, delete_time, delete_status
+    </sql>
+
+    <insert id="insertBatteryTypeList" parameterType="BatteryType">
+        INSERT INTO tb_batterytype(
+        type_id,battery_V,battery_SOC,device_height,
+        device_width,device_material,battery_type,battery_AH,
+        create_time,update_time,delete_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.typeId},#{item.batteryV},
+            #{item.batterySoc},#{item.deviceHeight},#{item.deviceWidth},
+            #{item.deviceMaterial},#{item.batteryType},#{item.batteryAh},
+            #{item.createTime},#{item.updateTime},#{item.deleteTime}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        type_id = VALUES(type_id),battery_V = VALUES(battery_V),
+        battery_SOC = VALUES(battery_SOC),device_height = VALUES(device_height),device_width = VALUES(device_width),
+        device_material = VALUES(device_material),battery_type = VALUES(battery_type),battery_AH = VALUES(battery_AH),
+        create_time = VALUES(create_time),update_time = VALUES(update_time),delete_time = VALUES(delete_time)
+    </insert>
+
+    <select id="queryPageBatteryType" resultMap="BaseResultMap">
+        SELECT
+        id,device_id,type_id,battery_V,battery_SOC,device_height,device_width,device_material,battery_type,battery_AH,update_time
+        FROM tb_batterytype
+        WHERE delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountBatteryType" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_batterytype
+        WHERE delete_status = 1;
+    </select>
+
+    <insert id="saveBatteryType">
+        INSERT INTO tb_batterytype
+        (device_id,type_id,battery_V,battery_SOC,device_height,device_width,device_material,battery_type,battery_AH,update_time)
+        VALUES
+        (#{deviceId},#{typeId},#{batteryV},#{batterySoc},#{deviceHeight},#{deviceWidth},#{deviceMaterial},#{batteryType},#{batteryAh},NOW())
+    </insert>
+
+    <select id="findBatteryTypeById" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_batterytype
+        WHERE id=#{id} AND delete_status = 1;
+    </select>
+
+    <update id="updateBatteryType">
+        UPDATE tb_batterytype
+        SET
+        device_id=#{deviceId},type_id=#{typeId},battery_V=#{batteryV},battery_SOC=#{batterySoc},device_height=#{deviceHeight},device_width=#{deviceWidth},device_material=#{deviceMaterial},battery_type=#{batteryType},battery_AH=#{batteryAh},update_time=NOW()
+        WHERE id=#{id}
+    </update>
+
+    <update id="deleteBatteryType">
+        UPDATE tb_batterytype
+        SET delete_status = 0
+        WHERE id=#{id};
+    </update>
+
+
+    <select id="findBatteryTypeByTypeId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_batterytype
+        WHERE type_id=#{deviceId}
+    </select>
+
+    <insert id="saveDeviceType">
+        INSERT INTO tb_batterytype
+        (type_id,battery_V,battery_SOC,device_height,device_width,device_material,battery_type,battery_AH,create_time)
+        VALUES
+        (#{typeId},#{batteryV},#{batterySoc},#{deviceHeight},#{deviceWidth},#{deviceMaterial},#{batteryType},#{batteryAh},NOW())
+    </insert>
+
+    <update id="updateDeviceType">
+        UPDATE tb_batterytype
+        SET
+        battery_V=#{batteryV},battery_SOC=#{batterySoc},device_height=#{deviceHeight},device_width=#{deviceWidth},device_material=#{deviceMaterial},battery_type=#{batteryType},battery_AH=#{batteryAh},update_time=NOW()
+        WHERE type_id=#{typeId}
+    </update>
+
+
+</mapper>

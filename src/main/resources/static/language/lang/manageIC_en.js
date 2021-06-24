@@ -1,0 +1,15 @@
+var data_en = {
+    "title": "IC Management",
+    "name": "IC Management",
+    "name1": "Battery Id",
+    "name2": "Batch Deletion",
+    "table1": "BatteryId",
+    "table2": "BatteryName",
+    "table3": "Price",
+    "table4": "BatteryStatus",
+    "table5": "BatteryType",
+    "table6": "ProtocolVersion",
+    "table7": "BatteryVersion",
+    "table8": "VerifyMethod",
+    "table9": "Operation",
+};

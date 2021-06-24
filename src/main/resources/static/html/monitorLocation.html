@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="keywords" content="百度地图,百度地图API，百度地图自定义工具，百度地图所见即所得工具"/>
+    <meta name="description" content="百度地图API自定义地图，帮助用户在可视化操作下生成百度地图"/>
+    <title data-action="title">Location Services</title>
+    <!--引用百度地图API-->
+    <style type="text/css">
+        /*html,body{margin:0;padding:0;}*/
+        html {
+            height: 100%
+        }
+
+        body {
+            height: 100%;
+            margin: 0px;
+            padding: 0px
+        }
+
+        #map {
+            height: 100%
+        }
+
+        /*.iw_poi_title {color:#CC5522;font-size:14px;font-weight:bold;overflow:hidden;padding-right:13px;white-space:nowrap}*/
+        /*.iw_poi_content {font:12px arial,sans-serif;overflow:visible;padding-top:4px;white-space:-moz-pre-wrap;word-wrap:break-word}*/
+    </style>
+    <script type="text/javascript"
+            src="https://api.map.baidu.com/api?v=3.0&ak=ysjgy7NKzazePSdFjr9NFgfDqfNn7Nst&s=1"></script>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a>
+          <cite data-action="name">Location Services</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+</div>
+
+<!--百度地图容器-->
+<div style="width:80%;height:100%;border:#ccc solid 1px;float: left;">
+    <div style="width:100%;height:95%;border:#ccc solid 1px;float: left;" id="dituContent"></div>
+    <div style="width:80%;height:4%; bottom: 0px;border:#ccc solid 1px;">
+        <li style="float: left">
+            <span data-action="name1">All batteries:</span>
+            <span id="batteryCount" class="layui-badge layui-bg-blue" style="margin-right: 10px;"></span>
+        </li>
+        <li style="float: left">
+            <span data-action="name2">Online batteries:</span>
+            <span id="batteryOnLineCount" class="layui-badge layui-bg-green" style="margin-right: 10px;"></span>
+        </li>
+        <li style="float: left">
+            <span data-action="name3">Offline batteries:</span>
+            <span id="batteryNoLineCount" class="layui-badge layui-bg-black" style="margin-right: 10px;"></span>
+        </li>
+        <li style="float: left">
+            <span data-action="name4">Sleeping batteries:</span>
+            <span id="batterySleepCount" class="layui-badge layui-bg-cyan" style="margin-right: 10px;"></span>
+        </li>
+        <li style="float: left">
+            <span data-action="name5">Error batteries:</span>
+            <span id="batteryErrorCount" class="layui-badge" style="margin-right: 10px;"></span>
+        </li>
+    </div>
+</div>
+<div class="grid-demo" style="width:19%;height:100%;border:#ccc solid 1px; float: left;">
+
+            <span class="layui-breadcrumb" style="margin-top: 5px;margin-left: 10px;">
+                <a><cite style="font-size: 20px;" data-action="name6">Battery List</cite></a>
+            </span>
+    <br/>
+
+    <div class="layui-inline" style="margin-top: 5px;margin-left: 10px;">
+        <input id="batteryId" type="text" name="batteryId" data-action="name7" placeholder="BatteryId"
+               autocomplete="off" class="layui-input" required>
+    </div>
+    <i type="button" id="search" style="margin-top: 5px;margin-left: 10px;" class="layui-icon layui-btn">&#xe615;</i>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th style="display:none;">id</th>
+            <th style="display:none;">longitude</th>
+            <th style="display:none;">latitude</th>
+            <th data-action="table1">Battery Id</th>
+            <th data-action="table2">Positioning</th>
+        </tr>
+        </thead>
+        <tbody id="content"></tbody>
+    </table>
+    <div id="demo8" style="text-align: center;"></div>
+</div>
+
+
+<script>
+    //创建和初始化地图函数：
+    function initMap() {
+        createMap();//创建地图
+        setMapEvent();//设置地图事件
+        addMapControl();//向地图添加控件
+        batteryValue();
+    }
+
+    //创建地图函数：
+    function createMap() {
+        var map = new BMap.Map("dituContent");//在百度地图容器中创建一个地图
+        var point = new BMap.Point(113.213901, 22.911626);//定义一个中心点坐标
+        map.centerAndZoom(point, 17);//设定地图的中心点和坐标并将地图显示在地图容器中
+        window.map = map;//将map变量存储在全局
+    }
+
+    //地图事件设置函数：
+    function setMapEvent() {
+        map.enableDragging();//启用地图拖拽事件，默认启用(可不写)
+        map.enableScrollWheelZoom();//启用地图滚轮放大缩小
+        map.enableDoubleClickZoom();//启用鼠标双击放大，默认启用(可不写)
+        map.enableKeyboard();//启用键盘上下左右键移动地图
+    }
+
+    //地图控件添加函数：
+    function addMapControl() {
+        //向地图中添加缩放控件
+        var ctrl_nav = new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_LEFT, type: BMAP_NAVIGATION_CONTROL_LARGE});
+        map.addControl(ctrl_nav);
+        //向地图中添加缩略图控件
+        var ctrl_ove = new BMap.OverviewMapControl({anchor: BMAP_ANCHOR_BOTTOM_RIGHT, isOpen: 1});
+        map.addControl(ctrl_ove);
+        //向地图中添加比例尺控件
+        var ctrl_sca = new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT});
+        map.addControl(ctrl_sca);
+    }
+
+    initMap();//创建和初始化地图
+
+    // 用经纬度设置地图中心点
+    function theLocation(x, y) {
+        if (x != "")
+            if (y != "") {
+                map.clearOverlays();
+                var new_point = new BMap.Point(x, y);
+                var marker = new BMap.Marker(new_point);  // 创建标注
+                map.addOverlay(marker);              // 将标注添加到地图中
+                map.panTo(new_point);
+            }
+    }
+
+
+    function batteryValue() {
+        var name = sessionStorage.getItem('loginName');
+        var pwd = sessionStorage.getItem('loginPwd');
+        var token = localStorage.getItem("tokenId");
+        var currLang = localStorage.currentLang;
+        var alertTip;
+        if (currLang == "ch") {
+            alertTip = "你没有权限！";
+        } else {
+            alertTip = "Permission Denied！";
+        }
+
+        $.ajax({
+            type: 'get',
+            dataType: 'json',
+            headers: {		//这里将存储的token取出发送至后端
+                TOKEN: token,
+                NAME: name,
+                PWD: pwd,
+                LANG: currLang
+            },
+            url: '/monitor/batteryValue',
+            success: function (data, textStatus, request) {
+                let tokenId = request.getResponseHeader("TOKEN")
+                window.localStorage.tokenId = tokenId;
+
+                if (data.msg != alertTip) {
+                    $("#batteryCount").text(data.batteryCount)
+                    $("#batteryOnLineCount").text(data.batteryOnLineCount)
+                    $("#batteryNoLineCount").text(data.batteryNoLineCount)
+                    $("#batterySleepCount").text(data.batterySleepCount)
+                    $("#batteryErrorCount").text(data.batteryErrorCount)
+                } else {
+                    layer.alert(data.msg);
+                }
+
+            },
+            error: function (xhr) {
+                var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                if (xhr.status == 401) {
+                    layer.alert(obj.msg, function (index) {
+                        top.location.href = '../login.html'
+                    });
+                }
+            }
+        });
+    }
+
+
+    $("#search").click(function () {
+        searchFenye()
+    });
+
+    // 分页
+    $(function () {
+        fenye();
+    })
+
+    function fenye() {
+        var name = sessionStorage.getItem('loginName');
+        var pwd = sessionStorage.getItem('loginPwd');
+        var token = localStorage.getItem("tokenId");
+        var currLang = localStorage.currentLang;
+        var alertTip;
+        if (currLang == "ch") {
+            alertTip = "你没有权限！";
+        } else {
+            alertTip = "Permission Denied！";
+        }
+
+        layui.use(['laypage', 'layer'], function () {
+            var laypage = layui.laypage
+                , layer = layui.layer;
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {'curr': 1, 'limit': 10},
+                headers: {		//这里将存储的token取出发送至后端
+                    TOKEN: token,
+                    NAME: name,
+                    PWD: pwd,
+                    LANG: currLang
+                },
+                url: '/monitor/location',
+                success: function (data, textStatus, request) {
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    if (data.msg != alertTip) {
+                        showData(data);
+                    } else {
+                        // layer.alert(data.msg);
+                    }
+                    laypage.render({
+                        elem: 'demo8'
+                        , count: data.ct
+                        , layout: ['limit', 'prev', 'page', 'next']
+                        , jump: function (obj) {
+                            var token1 = localStorage.getItem("tokenId");
+                            $.ajax({
+                                type: 'post',
+                                dataType: 'json',
+                                data: {'curr': obj.curr, 'limit': obj.limit},
+                                url: '/monitor/location',
+                                headers: {		//这里将存储的token取出发送至后端
+                                    TOKEN: token1,
+                                    NAME: name,
+                                    PWD: pwd,
+                                    LANG: currLang
+                                },
+                                success: function (data, textStatus, request) {
+                                    let tokenId = request.getResponseHeader("TOKEN")
+                                    window.localStorage.tokenId = tokenId;
+
+                                    if (data.msg != alertTip) {
+                                        showData(data);
+                                    } else {
+                                        layer.alert(data.msg);
+                                    }
+                                },
+                                error: function (xhr) {
+                                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                    if (xhr.status == 401) {
+                                        layer.alert(obj.msg, function (index) {
+                                            top.location.href = '../login.html'
+                                        });
+                                    }
+                                }
+                            })
+                        }
+                    });
+                },
+                error: function (xhr) {
+                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                    if (xhr.status == 401) {
+                        layer.alert(obj.msg, function (index) {
+                            top.location.href = '../login.html'
+                        });
+                    }
+                }
+            })
+        });
+    }
+
+    function showData(ds) {
+        $("#content").empty();
+        var htmlStr = "";
+        for (var i = 0; i < ds.data.length; i++) {
+            htmlStr += '<tr><td style="display:none;">';
+            htmlStr += ds.data[i].id;
+            htmlStr += '</td><td style="display:none;">';
+            htmlStr += ds.data[i].longitude;
+            htmlStr += '</td><td style="display:none;">';
+            htmlStr += ds.data[i].latitude;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].deviceId;
+            htmlStr += '</td><td>';
+            htmlStr += "<a class=\"layui-icon\" title=\"Positioning\" onclick=\"member_location(this,'Positioning id')\" href=\"javascript:;\" id=\"location\">&#xe715;</a>"
+            htmlStr += '</td></tr>'
+        }
+        $("#content").append(htmlStr);
+    }
+
+    function searchFenye() {
+        var batteryId = $("#batteryId").val();
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "电池编号为空";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Empty BatteryId";
+            alertTip = "Permission Denied！";
+        }
+
+        if (batteryId == "")
+            layer.alert(tip1);
+        else {
+
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+            layui.use(['laypage', 'layer'], function () {
+                var laypage = layui.laypage
+                    , layer = layui.layer;
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    data: {'curr': 1, 'limit': 10, 'batteryId': batteryId},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    url: '/monitor/findBattery',
+                    success: function (data, textStatus, request) {
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        if (data.msg != alertTip) {
+                            showData(data);
+                        } else {
+                            // layer.alert(data.msg);
+                        }
+                        laypage.render({
+                            elem: 'demo8'
+                            , count: data.ct
+                            , layout: ['limit', 'prev', 'page', 'next']
+                            , jump: function (obj) {
+                                var token1 = localStorage.getItem("tokenId");
+                                $.ajax({
+                                    type: 'post',
+                                    dataType: 'json',
+                                    data: {'curr': obj.curr, 'limit': obj.limit, 'batteryId': batteryId},
+                                    url: '/monitor/findBattery',
+                                    headers: {		//这里将存储的token取出发送至后端
+                                        TOKEN: token1,
+                                        NAME: name,
+                                        PWD: pwd,
+                                        LANG: currLang
+                                    },
+                                    success: function (data, textStatus, request) {
+                                        let tokenId = request.getResponseHeader("TOKEN")
+                                        window.localStorage.tokenId = tokenId;
+
+                                        if (data.msg != alertTip) {
+                                            showData(data);
+                                        } else {
+                                            layer.alert(data.msg);
+                                        }
+                                    },
+                                    error: function (xhr) {
+                                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                        if (xhr.status == 401) {
+                                            layer.alert(obj.msg, function (index) {
+                                                top.location.href = '../login.html'
+                                            });
+                                        }
+                                    }
+                                })
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../login.html'
+                            });
+                        }
+                    }
+                })
+            });
+        }
+    }
+
+    /*电池-定位*/
+    function member_location(obj, id) {
+
+        var arr = [];
+        var drr = [];
+        var td = obj.parentNode.parentNode;
+        $(td).each(function () {
+            var res = $(this).children('td').eq(1).html();
+            var les = $(this).children('td').eq(2).html();
+            arr.push(res);
+            drr.push(les);
+        })
+        var longitude = Number(arr);
+        var latitude = Number(drr);
+
+        theLocation(longitude, latitude);
+    }
+
+    //JS文本翻译
+    $(function () {
+        //获取语言
+        var currLang = localStorage.currentLang;
+        //定义多语言数组
+        var msg = new Array();
+        //定义多语言中文
+        msg["ch"] = "一二";
+        //定义多语言英文
+        msg["en"] = "AAAA";
+        // console.log(msg[currLang]);
+    });
+
+</script>
+<script type="text/javascript" src="../language/lang_switch.js"></script>
+<script type="text/javascript" src="../language/lang/monitorLocation_ch.js"></script>
+<script type="text/javascript" src="../language/lang/monitorLocation_en.js"></script>
+</body>
+</html>

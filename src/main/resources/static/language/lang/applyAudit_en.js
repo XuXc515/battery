@@ -1,0 +1,17 @@
+var data_en = {
+    "title": "Application Audit",
+    "startDate": "start date",
+    "endDate": "end date",
+    "name": "Application Audit",
+    "name1": "Application Status",
+    "name2": "to be confirmed",
+    "name3": "confirmed",
+    "name4": "Cancelled",
+    "name5": "Apply Id",
+    "name6": "Account",
+    "table1": "userId",
+    "table2": "userAccount",
+    "table3": "Password",
+    "table4": "Date",
+    "table5": "Operation",
+};

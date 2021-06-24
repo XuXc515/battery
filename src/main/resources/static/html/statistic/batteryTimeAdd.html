@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title data-action="title">BatteryTime Add</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <script src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="x-body">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="batteryId" class="layui-form-label" style="width: 20%;text-align: center">
+                <span class="x-red">*</span>
+                <span data-action="name1" >BatteryId</span>
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="batteryId" name="batteryId" required lay-verify="required"
+                       placeholder="请输入电池编号"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="setUseTimeDay" class="layui-form-label" style="width: 20%;text-align: center">
+                <span class="x-red">*</span>
+                <span data-action="name2">setUseTime(Day)</span>
+            </label>
+            <div class="layui-input-inline">
+                <input type="number" id="setUseTimeDay" name="setUseTimeDay" required lay-verify="required"
+                       placeholder="请输入数字"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="setUseTimeHour" class="layui-form-label" style="width: 20%;text-align: center">
+                <span class="x-red">*</span>
+                <span data-action="name3">setUseTime(hour)</span>
+            </label>
+            <div class="layui-input-inline">
+                <input type="number" id="setUseTimeHour" name="setUseTimeHour" required lay-verify="required"
+                       placeholder="请输入数字"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="setUseTimeMin" class="layui-form-label" style="width: 20%;text-align: center">
+                <span class="x-red">*</span>
+                <span data-action="name4">setUseTime(min)</span>
+            </label>
+            <div class="layui-input-inline">
+                <input type="number" id="setUseTimeMin" name="setUseTimeMin" required lay-verify="required"
+                       placeholder="请输入数字"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="setUseTimeSec" class="layui-form-label" style="width: 20%;text-align: center">
+                <span class="x-red">*</span>
+                <span data-action="name5">setUseTime(sec)</span>
+            </label>
+            <div class="layui-input-inline">
+                <input type="number" id="setUseTimeSec" name="setUseTimeSec" required lay-verify="required"
+                       placeholder="请输入数字"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label for="setUseTime" class="layui-form-label" style="width: 20%;text-align: center">
+            </label>
+            <i type="button" id="setUseTime" class="layui-icon layui-btn" data-action="name6" style="text-align: center">Add</i>
+        </div>
+    </form>
+</div>
+
+<script src="../../js/jquery-3.5.1.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+        $("#setUseTime").click(function () {
+
+            var batteryId = $("#batteryId").val();
+            var setUseTimeDay = $("#setUseTimeDay").val();
+            var setUseTimeHour = $("#setUseTimeHour").val();
+            var setUseTimeMin = $("#setUseTimeMin").val();
+            var setUseTimeSec = $("#setUseTimeSec").val();
+
+            var currLang = localStorage.currentLang;
+            var tip1;
+            var tip2;
+            var tip3;
+            var tip4;
+            var tip5;
+            var alertTip;
+            if (currLang == "ch") {
+                tip1 = "电池编号为空";
+                tip2 = "时长（天）为空";
+                tip3 = "时长（时）为空";
+                tip4 = "时长（分）为空";
+                tip5 = "时长（秒）为空";
+                alertTip = "你没有权限！";
+            } else {
+                tip1 = "Empty batteryId";
+                tip2 = "Empty useTime(day)";
+                tip3 = "Empty useTime(hour)";
+                tip4 = "Empty useTime(min)";
+                tip5 = "Empty useTime(sec)";
+                alertTip = "Permission Denied！";
+            }
+
+            if (batteryId == "")
+                layer.alert(tip1);
+            else if (setUseTimeDay == "" && setUseTimeHour == "" && setUseTimeMin == "" && setUseTimeSec == "")
+                layer.alert("请至少输入一个时间");
+            else if (setUseTimeDay > 60)
+                    layer.alert("请输入小于60的数");
+                else if (setUseTimeHour > 60)
+                    layer.alert("请输入小于60的数");
+                else if (setUseTimeMin > 60)
+                    layer.alert("请输入小于60的数");
+                else if (setUseTimeSec > 60)
+                    layer.alert("请输入小于60的数");
+                else{
+
+                var name = sessionStorage.getItem('loginName');
+                var pwd = sessionStorage.getItem('loginPwd');
+                var token = localStorage.getItem("tokenId");
+
+                $.ajax({
+                    type: "post",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    // url: '/battery/setBatteryTime',
+                    url: '/battery/setBatteryTimeWS',
+                    data: JSON.stringify({
+                        'deviceId': batteryId,
+                        'setUseDay': setUseTimeDay,
+                        'setUseHour': setUseTimeHour,
+                        'setUseMin': setUseTimeMin,
+                        'setUseSec': setUseTimeSec
+                    }),
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    success: function (data, textStatus, request) {
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        tip = "设置电池信息成功"
+                        if (data.status == "setSuccess") {
+                            layer.alert(tip, function (index) {
+                                x_admin_close();
+                            });
+                        } else if (data.status == "wait") {
+                            layer.alert("服务器繁忙，请稍后再试");
+                        }
+                        else if (data.status == "device_no_connect")
+                            layer.alert("电池未连接或电池不存在");
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../../login.html'
+                            });
+                        }
+                    }
+                });
+            }
+        })
+    })
+
+    /*关闭弹出框口*/
+    function x_admin_close() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    };
+
+    //JS文本翻译
+    $(function () {
+        //获取语言
+        var currLang = localStorage.currentLang;
+        //定义多语言数组
+        var msg = new Array();
+        //定义多语言中文
+        msg["ch"] = "一二";
+        //定义多语言英文
+        msg["en"] = "AAAA";
+        // console.log(msg[currLang]);
+    });
+</script>
+<script type="text/javascript" src="../../language/lang_switch.js"></script>
+<script type="text/javascript" src="../../language/lang/statistic/batteryTimeAdd_ch.js"></script>
+<script type="text/javascript" src="../../language/lang/statistic/batteryTimeAdd_en.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.SaleMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.Sale">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="sale_id" property="saleId" jdbcType="VARCHAR"/>
+        <result column="user_account" property="userAccount" jdbcType="VARCHAR"/>
+        <result column="battery_id" property="batteryId" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="pay_method" property="payMethod" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="rental_status" property="rentalStatus" jdbcType="INTEGER"/>
+        <result column="order_detail" property="orderDetail" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+
+        <result column="id" property="user.id" jdbcType="INTEGER"/>
+        <result column="user_id" property="user.userId" jdbcType="VARCHAR"/>
+        <result column="user_account" property="user.userAccount" jdbcType="VARCHAR"/>
+        <result column="user_name" property="user.userName" jdbcType="VARCHAR"/>
+        <result column="user_password" property="user.userPassword" jdbcType="VARCHAR"/>
+        <result column="age" property="user.age" jdbcType="INTEGER"/>
+        <result column="sex" property="user.sex" jdbcType="VARCHAR"/>
+        <result column="balance" property="user.balance" jdbcType="DECIMAL"/>
+        <result column="mobile" property="user.mobile" jdbcType="VARCHAR"/>
+        <result column="address" property="user.address" jdbcType="VARCHAR"/>
+        <result column="create_time" property="user.createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="user.updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="user.deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="user_role" property="user.userRole" jdbcType="VARCHAR"/>
+        <result column="delete_status" property="user.deleteStatus" jdbcType="INTEGER"/>
+
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, sale_id, user_account, battery_id, status, pay_method, price, rental_status, order_detail, create_time,
+        update_time, delete_time, delete_status
+    </sql>
+
+    <!--ApplyController-->
+    <select id="queryPageApply" resultMap="BaseResultMap">
+        SELECT b.*,a.*
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountApply" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.delete_status = 1;
+    </select>
+
+    <select id="findByDateApply" resultMap="BaseResultMap">
+        SELECT b.*,a.*
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.create_time BETWEEN #{start} AND #{end} AND b.battery_id=#{batteryId} AND b.user_account=#{userAccount}
+        AND b.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="findByDateApplyCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.create_time BETWEEN #{start} AND #{end} AND b.battery_id=#{batteryId} AND b.user_account=#{userAccount}
+        AND b.delete_status = 1;
+    </select>
+
+    <select id="findUserByIdApply" resultMap="BaseResultMap">
+        SELECT b.*,a.*
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.id=#{id} AND b.delete_status = 1;
+    </select>
+
+    <update id="updateApply">
+        UPDATE tb_sale SET battery_id=#{batteryId},update_time=NOW() WHERE id=#{id}
+    </update>
+
+    <update id="deleteApply">
+        UPDATE tb_sale SET delete_status = 0, delete_time=NOW() WHERE id=#{id}
+    </update>
+
+    <select id="findSaleByDeviceId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_sale
+        WHERE battery_id=#{batteryId} AND delete_status = 1;
+    </select>
+
+    <select id="findSaleByBatteryId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_sale
+        WHERE battery_id=#{batteryId} AND delete_status = 1 AND rental_status = 1;
+    </select>
+
+    <!--CostController-->
+    <select id="queryPageCost" resultMap="BaseResultMap">
+        SELECT b.*,a.*
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountCost" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.delete_status = 1;
+    </select>
+
+    <select id="findBySaleIdAndNameCost" resultMap="BaseResultMap">
+        SELECT b.*,a.*
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.sale_id=#{saleId} AND a.user_name=#{userName} AND b.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="findBySaleIdAndNameCostCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_user a INNER JOIN tb_sale b
+        ON a.user_account=b.user_account
+        WHERE b.sale_id=#{saleId} AND a.user_name=#{userName} AND b.delete_status = 1;
+    </select>
+
+    <select id="findBatteryIdByAccount" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_sale
+        WHERE delete_status = 1 AND user_account=#{userAccount}
+    </select>
+
+    <select id="findSaleByAccount" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_sale
+        WHERE delete_status = 1 AND user_account=#{userAccount}
+    </select>
+
+    <!--SaleController-->
+    <select id="findLastSaleId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_sale
+        ORDER BY id DESC limit 1;
+    </select>
+
+    <select id="batteryRentalCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_sale
+        WHERE delete_status = 1;
+    </select>
+
+    <select id="batteryCurrentRentalCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_sale
+        WHERE delete_status = 1 AND rental_status = 0;
+    </select>
+
+    <insert id="saveBatteryOrder">
+        INSERT INTO tb_sale (sale_id,user_account,battery_id,status,price,pay_method,order_detail,create_time)
+        VALUES (#{saleId},#{userAccount},#{batteryId},#{status},#{price},#{payMethod},#{orderDetail},NOW())
+    </insert>
+
+    <update id="changeBatteryOrder">
+        UPDATE tb_sale
+        SET status='已支付',update_time=NOW()
+        WHERE sale_id=#{saleId} AND delete_status = 1;
+    </update>
+
+    <select id="saleByOrderId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_sale
+        WHERE sale_id=#{saleId} AND delete_status = 1;
+    </select>
+
+    <update id="deleteBatteryOrder">
+        UPDATE tb_sale
+        SET delete_status = 0, delete_time=NOW()
+        WHERE sale_id=#{saleId}
+    </update>
+
+    <select id="findSaleBySaleId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_sale
+        WHERE sale_id=#{saleId} AND delete_status = 1;
+    </select>
+
+</mapper>

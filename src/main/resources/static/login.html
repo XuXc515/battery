@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-action="name"></title>
+    <link rel="shortcut icon" href="#"/>
+    <link rel="stylesheet" type="text/css" href="css/login.css">
+    <script type="text/javascript" src="lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div id="wrapper" class="login-page">
+    <div id="login_form" class="form">
+
+        <select id="lang" class=" form-control">
+            <option value="ch">中文</option>
+            <option value="en">English</option>
+        </select>
+
+        <form class="login-form">
+            <h2 data-action="Title"></h2>
+
+            <input type="text" data-action="Account" id="managerAccount"/>
+            <input type="password" data-action="Password" id="password"/>
+            <!--            <p><input type="checkbox" checked="checked" name="rememberMe" id="rememberMe" />记住我</p>-->
+            <button id="login" data-action="Login"></button>
+        </form>
+    </div>
+</div>
+
+<script src="js/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="js/md5.js"></script>
+<script type="text/javascript">
+
+    function check_login() {
+        var managerAccount = $("#managerAccount").val();
+        var password = $("#password").val();
+
+        var pwd = hex_md5(password)
+
+        sessionStorage.setItem('deviceId', "");
+
+        $.ajax({
+            url: '/backManager/login',
+            type: "POST",
+            data: {'managerAccount': managerAccount, 'password': pwd},
+            success: function (data, textStatus, request) {
+
+                // if (data.manager.managerAccount==managerAccount){
+                if (data.msg != "Username or password is incorrect") {
+                    sessionStorage.setItem('loginName', data.manager.managerAccount);
+                    sessionStorage.setItem('loginPwd', data.manager.managerPassword);
+
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    window.location.href = 'index.html'
+                } else {
+                    $("#login_form").removeClass('shake_effect');
+                    setTimeout(function () {
+                        $("#login_form").addClass('shake_effect')
+                    }, 1);
+                }
+            }
+
+        });
+    }
+
+    $(function () {
+        $("#login").click(function () {
+            check_login();
+            return false;
+        })
+        $('.message a').click(function () {
+            $('form').animate({
+                height: 'toggle',
+                opacity: 'toggle'
+            }, 'slow');
+        });
+    })
+
+    //JS文本翻译
+    $(function () {
+        //获取语言
+        var currLang = localStorage.currentLang;
+        // console.log(currLang)
+        //定义多语言数组
+        var msg = new Array();
+        //定义多语言中文
+        msg["ch"] = "一二";
+        //定义多语言英文
+        msg["en"] = "AAAA";
+        // console.log(msg[currLang]);
+    });
+
+</script>
+<script type="text/javascript" src="language/lang_switch.js"></script>
+<script type="text/javascript" src="language/lang/login_ch.js"></script>
+<script type="text/javascript" src="language/lang/login_en.js"></script>
+</body>
+</html>

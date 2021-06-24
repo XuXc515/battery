@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.RoleBackManagerMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.RoleBackManager">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="role_id" property="roleId" jdbcType="INTEGER"/>
+        <result column="manager_id" property="managerId" jdbcType="INTEGER"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, role_id, manager_id, delete_status
+    </sql>
+
+    <update id="deleteRoleManager">
+        UPDATE tb_role_backmanager
+        SET delete_status = 0
+        WHERE id=#{id}
+    </update>
+
+    <update id="deleteAllRoleManager" parameterType="java.lang.String">
+        UPDATE tb_role_backmanager
+        SET delete_status = 0
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <insert id="addRoleManager">
+        INSERT INTO tb_role_backmanager (role_id,manager_id)
+        VALUES (#{roleId},#{managerId})
+    </insert>
+
+    <update id="changeRoleManager">
+        UPDATE tb_role_backmanager
+        SET role_id=#{roleId}
+        WHERE manager_id=#{managerId} AND delete_status = 1
+    </update>
+
+</mapper>

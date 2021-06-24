@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title data-action="title">Permission Add</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <script src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="x-body">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="perUrl" class="layui-form-label">
+                <span class="x-red">*</span>
+                <span data-action="name1">Permission Name</span>
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="perUrl" name="perUrl" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="perName" class="layui-form-label">
+                <span class="x-red">*</span>
+                <span data-action="name2">PermissionDetail</span>
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="perName" name="perName" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="roleName" class="layui-form-label">
+                <span class="x-red">*</span>
+                <span data-action="name3">RoleName</span>
+            </label>
+            <div class="layui-input-inline">
+                <select id="roleName" name="roleName" class="valid">
+                    <option value="root" selected data-action="name6">root</option>
+                    <option value="admin" data-action="name7">admin</option>
+                </select>
+            </div>
+        </div>
+
+        <!--        <div class="layui-form-item">-->
+        <!--            <label for="perName" class="layui-form-label">-->
+        <!--                <span class="x-red">*</span>权限名称-->
+        <!--            </label>-->
+        <!--            <div class="layui-input-inline">-->
+        <!--                <input type="text" id="perName" name="perName" required lay-verify="required"-->
+        <!--                       autocomplete="off" class="layui-input">-->
+        <!--            </div>-->
+        <!--        </div>-->
+
+
+        <div class="layui-form-item">
+            <label for="addPer" class="layui-form-label">
+            </label>
+            <i type="button" id="addPer" class="layui-icon layui-btn" data-action="name4">Add</i>
+        </div>
+    </form>
+</div>
+
+<script src="../../js/jquery-3.5.1.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+        $("#addPer").click(function () {
+
+            var perUrl = $("#perUrl").val();
+            var perName = $("#perName").val();
+            var roleName = $("#roleName").val();
+
+            var currLang = localStorage.currentLang;
+            var tip1;
+            var tip2;
+            var tip3;
+            var alertTip;
+            if (currLang == "ch") {
+                tip1 = "权限名称为空";
+                tip2 = "权限描述为空";
+                tip3 = "角色名称为空";
+                alertTip = "你没有权限！";
+            } else {
+                tip1 = "Empty PermissionName";
+                tip2 = "Empty PermissionDetail";
+                tip3 = "Empty roleName";
+                alertTip = "Permission Denied！";
+            }
+
+            if (perUrl == "")
+                layer.alert(tip1);
+            else if (perName == "")
+                layer.alert(tip2);
+            else if (roleName == "")
+                layer.alert(tip3);
+            else {
+
+                var name = sessionStorage.getItem('loginName');
+                var pwd = sessionStorage.getItem('loginPwd');
+                var token = localStorage.getItem("tokenId");
+
+                $.ajax({
+                    url: '/backManager/addPer',
+                    type: "POST",
+                    data: {'perUrl': perUrl, 'perName': perName, 'roleName': roleName},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    success: function (data, textStatus, request) {
+
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        if (data.msg != alertTip) {
+                            layer.alert(data.msg, function (index) {
+                                x_admin_close();
+                            });
+                        } else {
+                            layer.alert(data.msg);
+                        }
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../../login.html'
+                            });
+                        }
+                    }
+                });
+            }
+        })
+    })
+
+    /*关闭弹出框口*/
+    function x_admin_close() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    };
+</script>
+<script type="text/javascript" src="../../language/lang_switch.js"></script>
+<script type="text/javascript" src="../../language/lang/user/permissionAdd_ch.js"></script>
+<script type="text/javascript" src="../../language/lang/user/permissionAdd_en.js"></script>
+</body>
+</html>

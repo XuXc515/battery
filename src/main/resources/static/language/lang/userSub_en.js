@@ -1,0 +1,15 @@
+var data_en = {
+    "title": "Sub-User",
+    "name": "Sub-User",
+    "name1": "ManagerAccount",
+    "name2": "Add",
+    "table1": "ManagerId",
+    "table2": "ManagerAccount",
+    "table3": "ManagerName",
+    "table4": "Email",
+    "table5": "Mobile",
+    "table6": "Master",
+    "table7": "CreateTime",
+    "table8": "Status",
+    "table9": "Operation",
+};

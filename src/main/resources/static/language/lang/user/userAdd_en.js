@@ -1,0 +1,15 @@
+var data_en = {
+    "title": "User Add",
+    "name": "User Add",
+    "name1": "UserAccount",
+    "name2": "UserName",
+    "name3": "Password",
+    "name4": "Age",
+    "name5": "Sex",
+    "name6": "man",
+    "name7": "woman",
+    "name8": "Balance",
+    "name9": "Mobile",
+    "name10": "Address",
+    "name11": "Add",
+};

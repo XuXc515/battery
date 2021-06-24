@@ -1,0 +1,44 @@
+BOARD=YAL
+CPU_ABI2=
+HOST=cn-central-1b-9e6a65c311596523367901-2368177958-q4bjd
+versionName=1.0
+SUPPORTED_64_BIT_ABIS=[Ljava.lang.String;@12c6cdb
+CPU_ABI=arm64-v8a
+PERMISSIONS_REVIEW_REQUIRED=true
+DISPLAY=YAL-AL00 10.1.0.162(C00E160R4P11)
+SUPPORTED_ABIS=[Ljava.lang.String;@5774378
+FINGERPRINTEX=HONOR/YAL-AL00/HWYAL:10/HUAWEIYAL-AL00/10.1.0.162C00:user/release-keys
+FINGERPRINT=HONOR/YAL-AL00/HWYAL:10/HUAWEIYAL-AL00/10.1.0.162C00:user/release-keys
+PRODUCT=YAL-AL00
+ID=HUAWEIYAL-AL00
+HWFINGERPRINT=///YAL-LGRP1-CHN 10.1.0.162/YAL-AL00-CUST 10.1.0.160(C00)/YAL-AL00-PRELOAD 10.0.0.11(C00R4)//
+TYPE=user
+SERIAL=unknown
+DEVICE=HWYAL
+TIME=1596527060000
+MODEL=YAL-AL00
+MANUFACTURER=HUAWEI
+USER=test
+versionCode=1
+BRAND=HONOR
+SUPPORTED_32_BIT_ABIS=[Ljava.lang.String;@f2ea1ea
+HARDWARE=kirin980
+IS_DEBUGGABLE=false
+BOOTLOADER=unknown
+RADIO=unknown
+UNKNOWN=unknown
+IS_EMULATOR=false
+TAGS=release-keys
+java.lang.RuntimeException: Can't toast on a thread that has not called Looper.prepare()
+	at android.widget.Toast$TN.<init>(Toast.java:425)
+	at android.widget.Toast.<init>(Toast.java:122)
+	at android.widget.Toast.makeText(Toast.java:294)
+	at android.widget.Toast.makeText(Toast.java:284)
+	at com.example.battery.UserInfoActivity.showMsg(UserInfoActivity.java:562)
+	at com.example.battery.UserInfoActivity.access$300(UserInfoActivity.java:68)
+	at com.example.battery.UserInfoActivity$2$1.onFailure(UserInfoActivity.java:143)
+	at okhttp3.RealCall$AsyncCall.execute(RealCall.java:148)
+	at okhttp3.internal.NamedRunnable.run(NamedRunnable.java:32)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+	at java.lang.Thread.run(Thread.java:929)

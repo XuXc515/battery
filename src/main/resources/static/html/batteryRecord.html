@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title data-action="title">Maintenance Record</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+<!--        <a href="">首页</a>-->
+          <!--        <a href="">演示</a>-->
+        <a><cite data-action="name">Maintenance Record</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="Refresh">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+</div>
+
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" method="get">
+            <!--                    <input class="layui-input" placeholder="开始日" name="start" id="start">-->
+            <!--                    <input class="layui-input" placeholder="截止日" name="end" id="end">-->
+            <!--            <input type="text" name="batteryId" id="priceId" placeholder="请输入电池编号" autocomplete="off" class="layui-input">-->
+            <input type="text" name="batteryId" id="searchId" data-action="name1" placeholder="Battery Id"
+                   autocomplete="off" class="layui-input">
+            <i type="button" id="search" class="layui-icon layui-btn">&#xe615;</i>
+        </form>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i><span
+                data-action="name2">Batch Deletion</span></button>
+        <button id="test2" class="layui-btn" onclick="x_add_show('Add','battery/batteryRecordAdd.html')"><i
+                class="layui-icon"></i><span data-action="name3">Add</span></button>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>
+                <input type="checkbox" id="checkOrCancelAll" class="layui-unselect header layui-form-checkbox"
+                       lay-skin="primary">
+            </th>
+            <th style="display:none;">id</th>
+            <th data-action="table1">BatteryId</th>
+            <th data-action="table2">FaultDetail</th>
+            <th data-action="table3">BatteryStatus</th>
+            <th data-action="table4">UpdateTime</th>
+            <th data-action="table5">Operation</th>
+        </tr>
+        </thead>
+        <tbody id="tableContent"></tbody>
+    </table>
+    <div id="demo8" style="text-align: center;"></div>
+</div>
+
+
+<script>
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份
+            "d+": this.getDate(),                    //日
+            "h+": this.getHours(),                   //小时
+            "m+": this.getMinutes(),                 //分
+            "s+": this.getSeconds(),                 //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return fmt;
+    }
+
+    // 分页
+    $(function () {
+        fenye();
+    })
+
+    function fenye() {
+        var name = sessionStorage.getItem('loginName');
+        var pwd = sessionStorage.getItem('loginPwd');
+        var token = localStorage.getItem("tokenId");
+        var currLang = localStorage.currentLang;
+        var alertTip;
+        if (currLang == "ch") {
+            alertTip = "你没有权限！";
+        } else {
+            alertTip = "Permission Denied！";
+        }
+
+        layui.use(['laypage', 'layer'], function () {
+            var laypage = layui.laypage
+                , layer = layui.layer;
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {'curr': 1, 'limit': 10},
+                headers: {		//这里将存储的token取出发送至后端
+                    TOKEN: token,
+                    NAME: name,
+                    PWD: pwd,
+                    LANG: currLang
+                },
+                url: '/battery/batteryRepair',
+                success: function (data, textStatus, request) {
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    if (data.msg != alertTip) {
+                        showData(data);
+                    } else {
+                        // layer.alert(data.msg);
+                    }
+                    laypage.render({
+                        elem: 'demo8'
+                        , count: data.ct
+                        , layout: ['limit', 'prev', 'page', 'next']
+                        , jump: function (obj) {
+                            var token1 = localStorage.getItem("tokenId");
+                            $.ajax({
+                                type: 'post',
+                                dataType: 'json',
+                                data: {'curr': obj.curr, 'limit': obj.limit},
+                                url: '/battery/batteryRepair',
+                                headers: {		//这里将存储的token取出发送至后端
+                                    TOKEN: token1,
+                                    NAME: name,
+                                    PWD: pwd,
+                                    LANG: currLang
+                                },
+                                success: function (data, textStatus, request) {
+                                    let tokenId = request.getResponseHeader("TOKEN")
+                                    window.localStorage.tokenId = tokenId;
+
+                                    if (data.msg != alertTip) {
+                                        showData(data);
+                                    } else {
+                                        layer.alert(data.msg);
+                                    }
+                                },
+                                error: function (xhr) {
+                                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                    if (xhr.status == 401) {
+                                        layer.alert(obj.msg, function (index) {
+                                            top.location.href = '../login.html'
+                                        });
+                                    }
+                                }
+                            })
+                        }
+                    });
+                },
+                error: function (xhr) {
+                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                    if (xhr.status == 401) {
+                        layer.alert(obj.msg, function (index) {
+                            top.location.href = '../login.html'
+                        });
+                    }
+                }
+            })
+        });
+    }
+
+    function showData(ds) {
+        $("#tableContent").empty();
+        var htmlStr = "";
+        for (var i = 0; i < ds.data.length; i++) {
+            var time = new Date(ds.data[i].updateTime).format("yyyy-MM-dd hh:mm:ss");
+            htmlStr += '<tr><td>';
+            htmlStr += "<input name=\"item\" type=\"checkbox\" class=\"layui-unselect layui-form-checkbox\" lay-skin=\"primary\">"
+            htmlStr += '</td><td style="display:none;">';
+            htmlStr += ds.data[i].id;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].deviceId;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].faultDetail;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].deviceRepair;
+            htmlStr += '</td><td>';
+            htmlStr += time;
+            htmlStr += '</td><td>';
+            htmlStr += "<a class=\"layui-icon\" title=\"delete\" onclick=\"member_del(this,'delete id')\" href=\"javascript:;\" id=\"del\">&#xe640;</a>"
+            htmlStr += '</td></tr>'
+
+        }
+        $("#tableContent").append(htmlStr);
+        myClick();
+    }
+
+    $("#search").click(function () {
+        searchFenye()
+    });
+
+    function searchFenye() {
+        var searchId = $("#searchId").val();
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "电池编号为空";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Empty BatteryId";
+            alertTip = "Permission Denied！";
+        }
+
+        if (searchId == "")
+            layer.alert(tip1);
+        else {
+
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+            layui.use(['laypage', 'layer'], function () {
+                var laypage = layui.laypage
+                    , layer = layui.layer;
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    data: {'curr': 1, 'limit': 10, 'batteryId': searchId},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    url: '/battery/findBatteryRepair',
+                    success: function (data, textStatus, request) {
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        if (data.msg != alertTip) {
+                            showData(data);
+                        } else {
+                            // layer.alert(data.msg);
+                        }
+                        laypage.render({
+                            elem: 'demo8'
+                            , count: data.ct
+                            , layout: ['limit', 'prev', 'page', 'next']
+                            , jump: function (obj) {
+                                var token1 = localStorage.getItem("tokenId");
+                                $.ajax({
+                                    type: 'post',
+                                    dataType: 'json',
+                                    data: {'curr': obj.curr, 'limit': obj.limit, 'batteryId': searchId},
+                                    url: '/battery/findBatteryRepair',
+                                    headers: {		//这里将存储的token取出发送至后端
+                                        TOKEN: token1,
+                                        NAME: name,
+                                        PWD: pwd,
+                                        LANG: currLang
+                                    },
+                                    success: function (data, textStatus, request) {
+                                        let tokenId = request.getResponseHeader("TOKEN")
+                                        window.localStorage.tokenId = tokenId;
+
+                                        if (data.msg != alertTip) {
+                                            showData(data);
+                                        } else {
+                                            layer.alert(data.msg);
+                                        }
+                                    },
+                                    error: function (xhr) {
+                                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                        if (xhr.status == 401) {
+                                            layer.alert(obj.msg, function (index) {
+                                                top.location.href = '../login.html'
+                                            });
+                                        }
+                                    }
+                                })
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../login.html'
+                            });
+                        }
+                    }
+                })
+            });
+        }
+    }
+
+    // 全选/全不选
+    function myClick() {
+        var hobbies = document.getElementsByName("item");
+        // 获取全选/全不选选项
+        var obj = document.getElementById("checkOrCancelAll");
+        obj.onclick = function () {
+            if (this.checked) {
+                for (var i = 0; i < hobbies.length; i++) {
+                    hobbies[i].checked = true;
+                }
+            } else {
+                for (var i = 0; i < hobbies.length; i++) {
+                    hobbies[i].checked = false;
+                }
+            }
+            // 给每一个checkbox添加一个单击事件
+            for (var i = 0; i < hobbies.length; i++) {
+                hobbies[i].onclick = function () {
+                    checkOrCancelAll.checked = true;
+                    for (var i = 0; i < hobbies.length; i++) {
+                        if (!hobbies[i].checked) {
+                            checkOrCancelAll.checked = false;
+                            break;
+                        }
+                    }
+                };
+            }
+        }
+    }
+
+
+    //添加弹出层
+    function x_add_show(title, url, w, h) {
+
+        var currLang = localStorage.currentLang;
+        if (currLang == "ch")
+            title = "添加";
+        else
+            title = "Add";
+
+        if (title == null || title == '') {
+            title = false;
+        }
+        ;
+        if (url == null || url == '') {
+            url = "404.html";
+        }
+        ;
+        if (w == null || w == '') {
+            w = ($(window).width() * 0.6);
+        }
+        ;
+        if (h == null || h == '') {
+            h = ($(window).height() - 120);
+        }
+        ;
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade: 0.4,
+            title: title,
+            content: url
+        });
+    }
+
+    /*电池-删除*/
+    function member_del(obj, id) {
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var tip2;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "你确定要删除吗？";
+            tip2 = "已删除!";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Are you sure you want to delete？";
+            tip2 = "deleted!";
+            alertTip = "Permission Denied！";
+        }
+
+        layer.confirm(tip1, function (index) {
+            //发异步删除数据
+            // $(obj).parents("tr").remove();
+            // layer.msg('已删除!',{icon:1,time:1000});
+
+            var arr = [];
+            var td = obj.parentNode.parentNode;
+            $(td).each(function () {
+                var res = $(this).children('td').eq(1).html();
+                arr.push(res);
+            })
+            var bid = Number(arr);
+
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+            $.ajax({
+                url: '/battery/changeBatteryRepair',
+                type: "POST",
+                data: {'id': bid},
+                headers: {		//这里将存储的token取出发送至后端
+                    TOKEN: token,
+                    NAME: name,
+                    PWD: pwd,
+                    LANG: currLang
+                },
+                success: function (data, textStatus, request) {
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    if (data.msg != alertTip) {
+                        $(obj).parents("tr").remove();
+                        layer.msg(tip2, {icon: 1, time: 1000});
+                    } else {
+                        layer.alert(data.msg);
+                    }
+                },
+                error: function (xhr) {
+                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                    if (xhr.status == 401) {
+                        layer.alert(obj.msg, function (index) {
+                            top.location.href = '../login.html'
+                        });
+                    }
+                }
+            });
+        });
+    }
+
+    function delAll() {
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var tip2;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "请选择要删除的记录";
+            tip2 = "你确定要删除吗？";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Please select the record to delete";
+            tip2 = "Are you sure you want to delete？";
+            alertTip = "Permission Denied！";
+        }
+
+        var chckBox = document.getElementsByName("item");
+        var num = chckBox.length;
+        var ids = [];
+        var tt = [];
+        var trr = [];
+        for (var i = 0; i < num; i++) {
+            if (chckBox[i].checked) {
+                tt.push(chckBox[i])
+            }
+        }
+        for (var i = 0; i < tt.length; i++) {
+            var tr = tt[i].parentNode.parentNode;
+            $(tr).each(function () {
+                var res = $(tr).children('td').eq(1).html();
+                trr.push(res);
+            })
+            var bid = Number(trr[i]);
+            ids.push(bid)
+        }
+        if (ids.length == 0) {
+            layer.confirm(tip1);
+        } else {
+            // var data = tableCheck.getData();
+            layer.confirm(tip2, function (index) {
+
+                var name = sessionStorage.getItem('loginName');
+                var pwd = sessionStorage.getItem('loginPwd');
+                var token = localStorage.getItem("tokenId");
+                var currLang = localStorage.currentLang;
+                $.ajax({
+                    url: '/battery/changeAllBatteryRepair',
+                    type: "POST",
+                    data: {'ids': ids},
+                    traditional: true,
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    success: function (data, textStatus, request) {
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+
+                        if (data.msg != alertTip) {
+                            window.location.href = 'batteryRecord.html'
+                        } else {
+                            layer.alert(data.msg);
+                        }
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../login.html'
+                            });
+                        }
+                    }
+                });
+            });
+        }
+    }
+
+    //JS文本翻译
+    $(function () {
+        //获取语言
+        var currLang = localStorage.currentLang;
+        //定义多语言数组
+        var msg = new Array();
+        //定义多语言中文
+        msg["ch"] = "一二";
+        //定义多语言英文
+        msg["en"] = "AAAA";
+        // console.log(msg[currLang]);
+    });
+
+</script>
+<script type="text/javascript" src="../language/lang_switch.js"></script>
+<script type="text/javascript" src="../language/lang/batteryRecord_ch.js"></script>
+<script type="text/javascript" src="../language/lang/batteryRecord_en.js"></script>
+</body>
+
+</html>

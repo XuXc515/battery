@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.PermissionMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.Permission">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="per_url" property="perUrl" jdbcType="VARCHAR"/>
+        <result column="per_name" property="perName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, per_url, per_name, create_time, update_time, delete_time, delete_status
+    </sql>
+
+    <select id="findPermissionByAccount" resultMap="BaseResultMap">
+        SELECT p.id,p.per_url,p.per_name FROM tb_role r
+        LEFT JOIN tb_role_backmanager rb ON(r.id = rb.role_id)
+        LEFT JOIN tb_backmanager b ON(b.id = rb.manager_id)
+        LEFT JOIN tb_role_permission rp ON(rp.role_id = r.id)
+        LEFT JOIN tb_permission p ON(p.id = rp.permission_id )
+        WHERE b.manager_account = #{managerAccount} AND rp.delete_status = 1 AND p.delete_status = 1
+    </select>
+
+    <select id="findUserPermission" resultMap="BaseResultMap">
+        SELECT p.id,p.per_url,p.per_name FROM tb_role r
+        LEFT JOIN tb_role_permission rp ON(rp.role_id = r.id)
+        LEFT JOIN tb_permission p ON(p.id = rp.permission_id )
+        WHERE r.manager_role = #{userRole} AND rp.delete_status = 1 AND p.delete_status = 1
+    </select>
+
+    <select id="allPermission" resultType="java.lang.Integer">
+        SELECT id
+        FROM tb_permission
+        WHERE delete_status = 1
+    </select>
+
+    <insert id="addPermission">
+        INSERT INTO tb_permission (per_url,per_name,create_time)
+        VALUES (#{perUrl},#{perName},NOW())
+    </insert>
+
+    <select id="findIdByPerUrl" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_permission
+        WHERE per_url=#{perUrl} AND delete_status = 1
+    </select>
+
+    <update id="deletePermission">
+        UPDATE tb_permission
+        SET delete_status = 0
+        WHERE id=#{id}
+    </update>
+
+</mapper>

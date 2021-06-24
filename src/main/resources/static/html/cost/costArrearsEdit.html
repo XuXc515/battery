@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title data-action="title">CostArrears Edit</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../../css/font.css">
+    <link rel="stylesheet" href="../../css/xadmin.css">
+    <script src="../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <input type="hidden" id="id"/>
+        <div class="layui-form-item">
+            <label for="user_id" class="layui-form-label">
+                <span class="x-red"></span>
+                <span data-action="name1">UserId</span>
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="user_id" name="address" readonly="readonly"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="user_account" class="layui-form-label">
+                <span class="x-red"></span>
+                <span data-action="name2">UserAccount</span>
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="user_account" name="address" readonly="readonly"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="user_name" class="layui-form-label">
+                <span class="x-red"></span>
+                <span data-action="name3">UserName</span>
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="user_name" name="address" readonly="readonly"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="mobile" class="layui-form-label">
+                <span class="x-red"></span>
+                <span data-action="name4">Mobile</span>
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="mobile" name="address" readonly="readonly"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="address" class="layui-form-label">
+                <span class="x-red"></span>
+                <span data-action="name5">Address</span>
+            </label>
+            <div class="layui-input-block">
+                <input type="text" id="address" name="address" readonly="readonly"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="balance" class="layui-form-label">
+                <span class="x-red">*</span>
+                <span data-action="name6">Arrears</span>
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="balance" name="battery_id" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="editApply" class="layui-form-label">
+            </label>
+            <!--            <button  id="editApply" class="layui-btn" lay-filter="add" lay-submit="">-->
+            <!--                修改-->
+            <!--            </button>-->
+            <i type="button" id="editApply" class="layui-icon layui-btn" data-action="name7">Change</i>
+        </div>
+    </form>
+</div>
+<script src="../../js/jquery-3.5.1.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var id = sessionStorage.getItem('editId');
+        sessionStorage.removeItem('editId');
+        var name = sessionStorage.getItem('loginName');
+        var pwd = sessionStorage.getItem('loginPwd');
+        var token = localStorage.getItem("tokenId");
+        var currLang = localStorage.currentLang;
+        $.ajax({
+            url: '/cost/findArrearsById',
+            type: "GET",
+            data: {'id': id},
+            headers: {		//这里将存储的token取出发送至后端
+                TOKEN: token,
+                NAME: name,
+                PWD: pwd,
+                LANG: currLang
+            },
+            success: function (data, textStatus, request) {
+
+                let tokenId = request.getResponseHeader("TOKEN")
+                window.localStorage.tokenId = tokenId;
+
+                $("#id").val(data.id);
+                $("#user_id").val(data.userId);
+                $("#user_account").val(data.userAccount);
+                $("#user_name").val(data.userName);
+                $("#mobile").val(data.mobile);
+                $("#address").val(data.address);
+                $("#balance").val(data.balance);
+            },
+            error: function (xhr) {
+                var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                if (xhr.status == 401) {
+                    layer.alert(obj.msg, function (index) {
+                        top.location.href = '../../login.html'
+                    });
+                }
+            }
+        });
+    });
+
+    $(function () {
+        $("#editApply").click(function () {
+
+            var id = $("#id").val();
+            var balance = $("#balance").val();
+
+            var currLang = localStorage.currentLang;
+            var tip1;
+            var alertTip;
+            if (currLang == "ch") {
+                tip1 = "请填写欠款金额";
+                alertTip = "你没有权限！";
+            } else {
+                tip1 = "Please fill in the amount owed";
+                alertTip = "Permission Denied！";
+            }
+
+            if (balance == "")
+                layer.alert(tip1);
+            else {
+
+                var name = sessionStorage.getItem('loginName');
+                var pwd = sessionStorage.getItem('loginPwd');
+                var token = localStorage.getItem("tokenId");
+                $.ajax({
+                    url: '/cost/editArrears',
+                    type: "POST",
+                    data: {_method: "PUT", 'id': id, 'balance': balance},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    success: function (data, textStatus, request) {
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+
+                        if (data.msg != alertTip) {
+                            layer.alert(data, function (index) {
+                                x_admin_close();
+                            });
+                        } else {
+                            layer.alert(data.msg);
+                        }
+
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../../login.html'
+                            });
+                        }
+                    }
+                });
+            }
+        })
+    })
+
+    /*关闭弹出框口*/
+    function x_admin_close() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    };
+
+    //JS文本翻译
+    $(function () {
+        //获取语言
+        var currLang = localStorage.currentLang;
+        //定义多语言数组
+        var msg = new Array();
+        //定义多语言中文
+        msg["ch"] = "一二";
+        //定义多语言英文
+        msg["en"] = "AAAA";
+        // console.log(msg[currLang]);
+    });
+
+</script>
+<script type="text/javascript" src="../../language/lang_switch.js"></script>
+<script type="text/javascript" src="../../language/lang/cost/costArrearsEdit_ch.js"></script>
+<script type="text/javascript" src="../../language/lang/cost/costArrearsEdit_en.js"></script>
+</body>
+</html>

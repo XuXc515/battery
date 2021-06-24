@@ -1,0 +1,18 @@
+var data_en = {
+    "title": "Mileage",
+    "name": "Mileage",
+    "name1": "Battery Id",
+    "name2": "Set",
+    "table1": "BatteryId",
+    "table2": "BatterySoc",
+    "table3": "BatteryTemp",
+    "table4": "BatteryGPS",
+    "table5": "UsedTime(day)",
+    "table6": "UsedTime(hour)",
+    "table7": "UsedTime(minute)",
+    "table8": "UsedTime(second)",
+    "table9": "UsedTime",
+    "table10": "SetUseTime",
+    "table11": "DeviceStatus",
+    "table12":"Operation",
+};

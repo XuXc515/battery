@@ -1,0 +1,15 @@
+var data_ch = {
+    "title": "停工报告",
+    "name": "停工报告",
+    "name1": "类型编号",
+    "table1": "类型编号",
+    "table2": "电池编号",
+    "table3": "电池电压",
+    "table4": "电池SOC",
+    "table5": "电池高度",
+    "table6": "电池宽度",
+    "table7": "电池材料",
+    "table8": "电池类型",
+    "table9": "电池容量",
+    "table10": "更新时间",
+};

@@ -1,0 +1,17 @@
+var data_en = {
+    "title": "Battery Add",
+    "name": "Battery Add",
+    "name1": "BatteryId",
+    "name2": "BatteryName",
+    "name3": "BatteryStatus",
+    "name4": "BatteryType",
+    "name5": "longitude",
+    "name6": "latitude",
+    "name7": "isOnline",
+    "name8": "OnLine",
+    "name9": "OffLine",
+    "name10": "ProtocolVersion",
+    "name11": "BatteryVersion",
+    "name12": "VerifyMethod",
+    "name13": "Add",
+};

@@ -1,0 +1,17 @@
+var data_en = {
+    "title": "Tenant Application",
+    "name": "Tenant Application",
+    "name1": "start date",
+    "name2": "end date",
+    "name3": "Application Status",
+    "name4": "to be confirmed",
+    "name5": "confirmed",
+    "name6": "Cancelled",
+    "name7": "Apply Id",
+    "name8": "Account",
+    "table1": "userId",
+    "table2": "userAccount",
+    "table3": "Password",
+    "table4": "Date",
+    "table5": "Operation",
+};

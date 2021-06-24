@@ -1,0 +1,15 @@
+var data_ch = {
+    "title": "用户管理",
+    "name": "用户管理",
+    "name1": "用户账户",
+    "name2": "添加",
+    "table1": "用户编号",
+    "table2": "用户账户",
+    "table3": "用户名称",
+    "table4": "邮箱",
+    "table5": "电话",
+    "table6": "用户所属",
+    "table7": "创建时间",
+    "table8": "状态",
+    "table9": "操作",
+};

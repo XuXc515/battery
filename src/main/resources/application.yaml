@@ -1,0 +1,82 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/battery?serverTimezone=UTC&characterEncoding=utf-8
+    username: root
+    password: 123456
+    name: battery
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+    async:
+      request-timeout: 20000
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 500
+        min-idle: 0
+    lettuce:
+      shutdown-timeout: 0
+    database: 0
+    password:
+    timeout: 0
+
+system:
+  # 后端免认证接口 url
+  anonUrl: /login,/,/backManager/login,/backManager/findByAccount,/user/sign,/user/login,/user/changeSelf,/user/batteryTypeInfo,/user/batteryStatusInfo,/user/userBattery,/user/findBatteryInfoById,/aliPay/aliPay,/aliPay/aliPayNotify,/user/userRecharge,/user/addBatteryFault,/user/crash,/user/userOrder,/user/orderInfo,/user/userPhoto,/user/setBatteryTime,/user/getBatteryTime,/userTest/sign,/userTest/login,/userTest/changeSelf,/userTest/batteryTypeInfo,/userTest/batteryStatusInfo,/userTest/userBattery,/userTest/findBatteryInfoById,/userTest/addBatteryFault,/userTest/crash,/userTest/userOrder,/userTest/orderInfo,/userTest/userPhoto,/userTest/setBatteryTime,/userTest/getBatteryTime
+  # token有效期，单位秒
+  jwtTimeOut: 3600
+
+mybatis:
+  type-aliases-package: com.xxc.domain
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+
+#分页设置
+#pagehelper:
+#  reasonable: true    # reasonable：启用合理化时，如果pageNum<1会查询第一页，如果pageNum>pages会查询最后一页。
+#  support-methods-arguments: true
+#  params: count=countSql
+#  helper-dialect: mysql   #数据库类型
+
+#server:
+#  tomcat:
+#    max-http-form-post-size: 2048000000
+#  port: 8080
+
+#https
+#端口号
+server:
+  tomcat:
+    max-http-form-post-size: 5120000
+    connection-timeout: 20000
+    max-connections: 10000
+    accept-count: 3000
+    threads:
+      max: 400
+      min-spare: 3
+  port: 8088
+  ssl:
+    enabled: true
+    key-alias: lh_server
+    key-store: classpath:lh_server.jks
+    key-store-password: 123456
+    key-store-type: JKS
+
+    trust-store: classpath:lh_client_for_sever.jks
+    client-auth: need
+    trust-store-password: 123456
+    trust-store-type: JKS
+    protocol: TLS
+
+

@@ -1,0 +1,15 @@
+var data_ch = {
+    "title": "IC管理",
+    "name": "IC管理",
+    "name1": "电池编号",
+    "name2": "批量删除",
+    "table1": "电池编号",
+    "table2": "电池名称",
+    "table3": "价格",
+    "table4": "电池状态",
+    "table5": "电池类型",
+    "table6": "协议版本",
+    "table7": "电池版本",
+    "table8": "验证方法",
+    "table9": "操作",
+};

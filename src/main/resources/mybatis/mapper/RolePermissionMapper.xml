@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.RolePermissionMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.RolePermission">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="role_id" property="roleId" jdbcType="INTEGER"/>
+        <result column="permission_id" property="permissionId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+
+        <result column="id" property="role.id" jdbcType="INTEGER"/>
+        <result column="manager_role" property="role.managerRole" jdbcType="VARCHAR"/>
+        <result column="role_detail" property="role.roleDetail" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+
+        <result column="id" property="permission.id" jdbcType="INTEGER"/>
+        <result column="per_url" property="permission.perUrl" jdbcType="VARCHAR"/>
+        <result column="per_name" property="permission.perName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, role_id, permission_id, status, delete_status
+    </sql>
+
+    <select id="queryPagePermission" resultMap="BaseResultMap">
+        SELECT rp.id,r.manager_role,r.role_detail,p.id,p.per_url,p.per_name,rp.status
+        FROM tb_role_permission rp
+        INNER JOIN tb_role r ON rp.role_id = r.id
+        INNER JOIN tb_permission p ON rp.permission_id = p.id
+        WHERE p.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountPermission" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_role_permission rp
+        INNER JOIN tb_role r ON rp.role_id = r.id
+        INNER JOIN tb_permission p ON rp.permission_id = p.id
+        WHERE p.delete_status = 1
+    </select>
+
+    <update id="updatePermissionStatus">
+        UPDATE tb_role_permission
+        SET status=#{status},delete_status = #{deleteStatus}
+        WHERE id=#{id}
+    </update>
+
+    <select id="queryPageRolePermission" resultMap="BaseResultMap">
+        SELECT rp.id,r.manager_role,r.role_detail,p.per_url,p.per_name,rp.status
+        FROM tb_role_permission rp
+        INNER JOIN tb_role r ON rp.role_id = r.id
+        INNER JOIN tb_permission p ON rp.permission_id = p.id
+        WHERE r.manager_role = #{managerRole}
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountRolePermission" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_role_permission rp
+        INNER JOIN tb_role r ON rp.role_id = r.id
+        INNER JOIN tb_permission p ON rp.permission_id = p.id
+        WHERE r.manager_role = #{managerRole}
+    </select>
+
+    <insert id="addRolePermission">
+        INSERT INTO tb_role_permission (role_id,permission_id)
+        VALUES (#{roleId},#{permissionId})
+    </insert>
+
+</mapper>

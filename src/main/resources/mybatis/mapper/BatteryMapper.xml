@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xxc.dao.BatteryMapper">
+    <resultMap id="BaseResultMap" type="com.xxc.domain.Battery">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="device_id" property="deviceId" jdbcType="VARCHAR"/>
+        <result column="type_id" property="typeId" jdbcType="VARCHAR"/>
+        <result column="status_id" property="statusId" jdbcType="VARCHAR"/>
+        <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
+        <result column="battery_price" property="batteryPrice" jdbcType="DECIMAL"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="device_repair" property="deviceRepair" jdbcType="VARCHAR"/>
+        <result column="fault_detail" property="faultDetail" jdbcType="VARCHAR"/>
+        <result column="rental_time" property="rentalTime" jdbcType="VARCHAR"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="login_time" property="loginTime" jdbcType="BIGINT"/>
+        <result column="longitude" property="longitude" jdbcType="VARCHAR"/>
+        <result column="latitude" property="latitude" jdbcType="VARCHAR"/>
+        <result column="isonline" property="isOnline" jdbcType="VARCHAR"/>
+        <result column="protocolVersion" property="protocolVersion" jdbcType="VARCHAR"/>
+        <result column="deviceVersion" property="deviceVersion" jdbcType="VARCHAR"/>
+        <result column="verifyMethod" property="verifyMethod" jdbcType="VARCHAR"/>
+        <result column="deviceType" property="deviceType" jdbcType="VARCHAR"/>
+        <result column="delete_status" property="deleteStatus" jdbcType="INTEGER"/>
+
+        <result column="battery_V" property="batteryType.batteryV" jdbcType="VARCHAR"/>
+        <result column="battery_SOC" property="batteryType.batterySoc" jdbcType="VARCHAR"/>
+        <result column="device_height" property="batteryType.deviceHeight" jdbcType="VARCHAR"/>
+        <result column="device_width" property="batteryType.deviceWidth" jdbcType="VARCHAR"/>
+        <result column="device_material" property="batteryType.deviceMaterial" jdbcType="VARCHAR"/>
+        <result column="battery_type" property="batteryType.batteryType" jdbcType="VARCHAR"/>
+        <result column="battery_AH" property="batteryType.batteryAh" jdbcType="VARCHAR"/>
+        <result column="create_time" property="batteryType.createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="batteryType.updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="batteryType.deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="batteryType.deleteStatus" jdbcType="INTEGER"/>
+
+        <result column="battery_status" property="batteryStatus.batteryStatus" jdbcType="VARCHAR"/>
+        <result column="battery_voltage" property="batteryStatus.batteryVoltage" jdbcType="VARCHAR"/>
+        <result column="battery_temperature" property="batteryStatus.batteryTemperature" jdbcType="VARCHAR"/>
+        <result column="load_current" property="batteryStatus.loadCurrent" jdbcType="VARCHAR"/>
+        <result column="connect_status" property="batteryStatus.connectStatus" jdbcType="VARCHAR"/>
+        <result column="charge_status" property="batteryStatus.chargeStatus" jdbcType="VARCHAR"/>
+        <result column="work_status" property="batteryStatus.workStatus" jdbcType="VARCHAR"/>
+        <result column="create_time" property="batteryStatus.createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="batteryStatus.updateTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_time" property="batteryStatus.deleteTime" jdbcType="TIMESTAMP"/>
+        <result column="delete_status" property="batteryStatus.deleteStatus" jdbcType="INTEGER"/>
+
+        <result column="use_day" property="batteryTime.useDay" jdbcType="VARCHAR" />
+        <result column="use_hour" property="batteryTime.useHour" jdbcType="VARCHAR" />
+        <result column="use_min" property="batteryTime.useMin" jdbcType="VARCHAR" />
+        <result column="use_sec" property="batteryTime.useSec" jdbcType="VARCHAR" />
+        <result column="used_day" property="batteryTime.usedDay" jdbcType="VARCHAR" />
+        <result column="used_hour" property="batteryTime.usedHour" jdbcType="VARCHAR" />
+        <result column="used_min" property="batteryTime.usedMin" jdbcType="VARCHAR" />
+        <result column="used_sec" property="batteryTime.usedSec" jdbcType="VARCHAR" />
+        <result column="use_total_time" property="batteryTime.useTotalTime" jdbcType="VARCHAR" />
+        <result column="used_total_time" property="batteryTime.usedTotalTime" jdbcType="VARCHAR" />
+        <result column="create_time" property="batteryTime.createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="batteryTime.updateTime" jdbcType="TIMESTAMP" />
+        <result column="delete_time" property="batteryTime.deleteTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, project_id, device_id, type_id, status_id, device_name, battery_price, address, status,
+        device_repair, fault_detail,rental_time, start_time, create_time, update_time, delete_time, login_time,
+        longitude, latitude, isonline,protocolVersion, deviceVersion, verifyMethod, deviceType, delete_status
+    </sql>
+
+    <insert id="insertBatteryList" parameterType="Battery">
+        INSERT INTO tb_battery(
+        user_id,project_id,device_id,type_id,status_id,device_name,address,status,
+        login_time,longitude,latitude,isonline,verifyMethod,deviceType,
+        protocolVersion,deviceVersion,create_time,update_time,delete_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.userId},#{item.projectId},#{item.deviceId},#{item.typeId},#{item.statusId},
+            #{item.deviceName},#{item.address},#{item.status},#{item.loginTime},#{item.longitude},
+            #{item.latitude},#{item.isOnline},#{item.verifyMethod},#{item.deviceType},
+            #{item.protocolVersion},#{item.deviceVersion},#{item.createTime},
+            #{item.updateTime},#{item.deleteTime}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        user_id = VALUES(user_id),project_id = VALUES(project_id),device_id = VALUES(device_id),type_id =
+        VALUES(type_id),
+        status_id = VALUES(status_id),device_name = VALUES(device_name),address = VALUES(address),status =
+        VALUES(status),
+        login_time = VALUES(login_time),longitude = VALUES(longitude),latitude = VALUES(latitude),
+        isonline = VALUES(isonline),verifyMethod = VALUES(verifyMethod),deviceType = VALUES(deviceType),
+        protocolVersion = VALUES(protocolVersion),deviceVersion = VALUES(deviceVersion),create_time =
+        VALUES(create_time),
+        update_time = VALUES(update_time),delete_time = VALUES(delete_time)
+    </insert>
+
+    <select id="queryPageBattery" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery
+        WHERE delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountBattery" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1;
+    </select>
+
+    <select id="queryPageBatteryPrice" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery
+        WHERE delete_status = 1 AND battery_price IS NULL
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountBatteryPrice" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1 AND battery_price = NULL;
+    </select>
+
+    <select id="findAllBatteryType" resultMap="BaseResultMap">
+        SELECT a.*,b.*
+        FROM tb_battery a INNER JOIN tb_batterytype b
+        ON a.type_id=b.type_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1
+    </select>
+
+    <select id="queryPageBatteryType" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery a INNER JOIN tb_batterytype b
+        ON a.type_id=b.type_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountBatteryType" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery a INNER JOIN tb_batterytype b
+        ON a.type_id=b.type_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1;
+    </select>
+
+    <select id="queryPageFindBatteryType" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery a INNER JOIN tb_batterytype b
+        ON a.type_id=b.type_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1 AND a.type_id=#{typeId}
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountFindBatteryType" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery a INNER JOIN tb_batterytype b
+        ON a.type_id=b.type_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1 AND a.type_id=#{typeId};
+    </select>
+
+    <select id="findAllBatteryStatus" resultMap="BaseResultMap">
+        SELECT a.*,b.*
+        FROM tb_battery a INNER JOIN tb_batterystatus b
+        ON a.status_id=b.status_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1
+    </select>
+
+    <select id="queryPageBatteryStatus" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery a INNER JOIN tb_batterystatus b
+        ON a.status_id=b.status_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountBatteryStatus" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery a INNER JOIN tb_batterystatus b
+        ON a.status_id=b.status_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1;
+    </select>
+
+    <select id="queryPageFindBatteryStatus" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery a INNER JOIN tb_batterystatus b
+        ON a.status_id=b.status_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1 AND a.status_id = #{statusId}
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountFindBatteryStatus" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery a INNER JOIN tb_batterystatus b
+        ON a.status_id=b.status_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1 AND a.status_id = #{statusId};
+    </select>
+
+
+    <insert id="saveBattery">
+        INSERT INTO tb_battery
+        (device_id,device_name,status_id,type_id,longitude,latitude,isonline,update_time,protocolVersion,deviceVersion,verifyMethod)
+        VALUES
+        (#{deviceId},#{deviceName},#{statusId},#{typeId},#{longitude},#{latitude},#{isOnline},NOW(),#{protocolVersion},#{deviceVersion},#{verifyMethod})
+    </insert>
+
+    <select id="findBatteryById" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery
+        WHERE id=#{id} AND delete_status = 1;
+    </select>
+
+    <update id="updateBattery">
+        UPDATE tb_battery
+        SET
+        device_id=#{deviceId},device_name=#{deviceName},type_id=#{typeId},status_id=#{statusId},longitude=#{longitude},
+        latitude=#{latitude},isonline=#{isOnline},update_time=NOW(),protocolVersion=#{protocolVersion},deviceVersion=#{deviceVersion},
+        verifyMethod=#{verifyMethod}
+        WHERE id=#{id}
+    </update>
+
+    <update id="saveBatteryPrice">
+        UPDATE tb_battery
+        SET battery_price=#{batteryPrice}
+        WHERE id=#{id}
+    </update>
+
+    <select id="queryPageFindBattery" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery
+        WHERE device_id=#{deviceId} AND delete_status = 1
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountFindBattery" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE device_id=#{deviceId} AND delete_status = 1;
+    </select>
+
+    <update id="deleteBattery">
+        UPDATE tb_battery
+        SET delete_status = 0
+        WHERE id=#{id};
+    </update>
+
+    <update id="deleteAllBattery" parameterType="java.lang.String">
+        UPDATE tb_battery
+        SET delete_status = 0
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="queryPageBatteryRepair" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery
+        WHERE delete_status = 1 AND device_repair = '维修中'
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountBatteryRepair" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1 AND device_repair = '维修中';
+    </select>
+
+    <select id="queryFindPageBatteryRepair" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery
+        WHERE delete_status = 1 AND device_repair = '维修中' AND device_id=#{deviceId}
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryFindPageCountBatteryRepair" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1 AND device_repair = '维修中' AND device_id=#{deviceId};
+    </select>
+
+    <select id="findBatteryByDeviceId" resultMap="BaseResultMap">
+        SELECT *
+        FROM tb_battery
+        WHERE delete_status = 1 AND device_id=#{deviceId};
+    </select>
+
+    <update id="addBatteryRepair">
+        UPDATE tb_battery
+        SET device_repair = '维修中',fault_detail=#{faultDetail}
+        WHERE device_id=#{deviceId} AND delete_status = 1;
+    </update>
+
+    <update id="deleteBatteryRepair">
+        UPDATE tb_battery
+        SET device_repair = '正常'
+        WHERE id=#{id} AND delete_status = 1;
+    </update>
+
+    <update id="deleteAllBatteryRepair" parameterType="java.lang.String">
+        UPDATE tb_battery
+        SET device_repair = '正常'
+        WHERE delete_status = 1 AND id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="findBatteryInfoById" resultMap="BaseResultMap">
+        SELECT a.*,b.*,t.*
+        FROM tb_battery a
+        INNER JOIN tb_batterystatus b ON a.status_id=b.status_id
+        INNER JOIN tb_batterytype t ON a.type_id=t.type_id
+        WHERE a.delete_status = 1 AND b.delete_status = 1 AND t.delete_status = 1 AND a.device_id=#{deviceId};
+    </select>
+
+    <select id="batteryCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1;
+    </select>
+
+    <select id="batteryOnLineCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1 AND isonline = '在线';
+    </select>
+
+    <select id="batteryNoLineCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1 AND isonline = '离线';
+    </select>
+
+    <select id="batterySleepCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1;
+    </select>
+
+    <select id="batteryErrorCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery
+        WHERE delete_status = 1 AND device_repair = '维修中';
+    </select>
+
+    <select id="queryPageBatteryInfo" resultMap="BaseResultMap">
+        SELECT a.device_id,a.address,t.battery_SOC,c.battery_temperature,c.battery_status,b.used_day,b.used_hour,b.used_min,b.used_sec,b.use_total_time,b.used_total_time
+        FROM tb_battery a
+        INNER JOIN tb_batterytime b ON a.device_id=b.device_id
+        INNER JOIN tb_batterystatus c ON a.device_id=c.status_id
+        INNER JOIN tb_batterytype t ON a.device_id=t.type_id
+        limit #{curr},#{limit};
+    </select>
+
+    <select id="queryPageCountBatteryInfo" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tb_battery a
+        INNER JOIN tb_batterytime b ON a.device_id=b.device_id
+        INNER JOIN tb_batterystatus c ON a.device_id=c.status_id
+        INNER JOIN tb_batterytype t ON a.device_id=t.type_id
+    </select>
+
+    <insert id="saveDevice">
+        INSERT INTO tb_battery
+        (device_id,device_name,status_id,type_id,longitude,latitude,isonline,create_time,protocolVersion,deviceVersion,verifyMethod)
+        VALUES
+        (#{deviceId},#{deviceName},#{statusId},#{typeId},#{longitude},#{latitude},#{isOnline},NOW(),#{protocolVersion},#{deviceVersion},#{verifyMethod})
+    </insert>
+
+    <update id="updateDevice">
+        UPDATE tb_battery
+        SET
+        device_name=#{deviceName},type_id=#{typeId},status_id=#{statusId},address=#{address},longitude=#{longitude},
+        latitude=#{latitude},isonline=#{isOnline},update_time=NOW(),protocolVersion=#{protocolVersion},
+        deviceVersion=#{deviceVersion},verifyMethod=#{verifyMethod}
+        WHERE device_id=#{deviceId}
+    </update>
+
+</mapper>

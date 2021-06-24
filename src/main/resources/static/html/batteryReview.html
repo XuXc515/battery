@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title data-action="title">Annual Review</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+<!--        <a href="">首页</a>-->
+          <!--        <a href="">演示</a>-->
+        <a><cite data-action="name">Annual Review</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="Refresh">
+        <i class="layui-icon" style="line-height:38px">ဂ</i></a>
+</div>
+
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+            <input id="roleName" type="text" name="roleName" data-action="name1" placeholder="RoleName"
+                   autocomplete="off" required class="layui-input">
+            <i type="button" id="search" class="layui-icon layui-btn">&#xe615;</i>
+        </form>
+    </div>
+    <xblock>
+        <!--                <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>-->
+        <button id="test2" class="layui-btn" onclick="x_add_show('Add','user/permissionAdd.html')"><i
+                class="layui-icon"></i><span data-action="name2">Add</span></button>
+        <!--        <span class="x-right" style="line-height:40px">共有数据：88 条</span>-->
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th style="display:none;">id</th>
+            <th style="display:none;">pid</th>
+            <th data-action="table1">RoleName</th>
+            <th data-action="table2">RoleDetail</th>
+            <th data-action="table3">PermissionName</th>
+            <th data-action="table4">PermissionDetail</th>
+            <th data-action="table5">Status</th>
+            <th data-action="table6">Operation</th>
+        </tr>
+        </thead>
+        <tbody id="Content"></tbody>
+    </table>
+    <div id="demo8" style="text-align: center;"></div>
+
+</div>
+
+
+<script>
+
+    $("#search").click(function () {
+        searchRole();
+    });
+
+    function searchRole() {
+        var roleName = $("#roleName").val();
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "角色名称为空";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Empty RoleName";
+            alertTip = "Permission Denied！";
+        }
+
+        if (roleName == "")
+            layer.alert(tip1);
+        else {
+
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+            layui.use(['laypage', 'layer'], function () {
+                var laypage = layui.laypage
+                    , layer = layui.layer;
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    data: {'curr': 1, 'limit': 10, 'managerRole': roleName},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    url: '/backManager/rolePermission',
+                    success: function (data, textStatus, request) {
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        if (data.msg != alertTip) {
+                            showData(data);
+                        } else {
+                            // layer.alert(data.msg);
+                        }
+                        laypage.render({
+                            elem: 'demo8'
+                            , count: data.ct
+                            , layout: ['limit', 'prev', 'page', 'next']
+                            , jump: function (obj) {
+                                var token1 = localStorage.getItem("tokenId");
+                                $.ajax({
+                                    type: 'post',
+                                    dataType: 'json',
+                                    data: {'curr': obj.curr, 'limit': obj.limit, 'managerRole': roleName},
+                                    url: '/backManager/rolePermission',
+                                    headers: {		//这里将存储的token取出发送至后端
+                                        TOKEN: token1,
+                                        NAME: name,
+                                        PWD: pwd,
+                                        LANG: currLang
+                                    },
+                                    success: function (data, textStatus, request) {
+                                        let tokenId = request.getResponseHeader("TOKEN")
+                                        window.localStorage.tokenId = tokenId;
+
+                                        if (data.msg != alertTip) {
+                                            showData(data);
+                                        } else {
+                                            layer.alert(data.msg);
+                                        }
+                                    },
+                                    error: function (xhr) {
+                                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                        if (xhr.status == 401) {
+                                            layer.alert(obj.msg, function (index) {
+                                                top.location.href = '../login.html'
+                                            });
+                                        }
+                                    }
+                                })
+                            }
+                        });
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../login.html'
+                            });
+                        }
+                    }
+                })
+            });
+        }
+    }
+
+    // 分页
+    $(function () {
+        fenye();
+    })
+
+    function fenye() {
+        layui.use(['laypage', 'layer'], function () {
+            var laypage = layui.laypage
+                , layer = layui.layer;
+            //自定义排版
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+            var currLang = localStorage.currentLang;
+            var alertTip;
+            if (currLang == "ch") {
+                alertTip = "你没有权限！";
+            } else {
+                alertTip = "Permission Denied！";
+            }
+
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                data: {'curr': 1, 'limit': 10},
+                url: '/backManager/permission',
+                headers: {		//这里将存储的token取出发送至后端
+                    TOKEN: token,
+                    NAME: name,
+                    PWD: pwd,
+                    LANG: currLang
+                },
+                success: function (data, textStatus, request) {
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    if (data.msg != alertTip) {
+                        showData(data);
+                    } else {
+                        // layer.alert(data.msg);
+                    }
+                    laypage.render({
+                        elem: 'demo8'
+                        , count: data.ct
+                        , layout: ['limit', 'prev', 'page', 'next']
+                        , jump: function (obj) {
+                            //分页切换的回掉
+                            var token1 = localStorage.getItem("tokenId");
+                            $.ajax({
+                                type: 'post',
+                                dataType: 'json',
+                                data: {'curr': obj.curr, 'limit': obj.limit},
+                                url: '/backManager/permission',
+                                headers: {		//这里将存储的token取出发送至后端
+                                    TOKEN: token1,
+                                    NAME: name,
+                                    PWD: pwd,
+                                    LANG: currLang
+                                },
+                                success: function (data, textStatus, request) {
+                                    let tokenId = request.getResponseHeader("TOKEN")
+                                    window.localStorage.tokenId = tokenId;
+
+                                    if (data.msg != alertTip) {
+                                        showData(data);
+                                    } else {
+                                        layer.alert(data.msg);
+                                    }
+                                },
+                                error: function (xhr) {
+                                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                                    if (xhr.status == 401) {
+                                        layer.alert(obj.msg, function (index) {
+                                            top.location.href = '../login.html'
+                                        });
+                                    }
+                                }
+                            })
+                        }
+                    });
+                },
+                error: function (xhr) {
+                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                    if (xhr.status == 401) {
+                        layer.alert(obj.msg, function (index) {
+                            top.location.href = '../login.html'
+                        });
+                    }
+                }
+            })
+        });
+    }
+
+    function showData(ds) {
+        $("#Content").empty();
+        var htmlStr = "";
+        for (var i = 0; i < ds.data.length; i++) {
+            htmlStr += '<tr><td style="display:none;">';
+            htmlStr += ds.data[i].id;
+            htmlStr += '</td><td style="display:none;">';
+            htmlStr += ds.data[i].permission.id;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].role.managerRole;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].role.roleDetail;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].permission.perUrl;
+            htmlStr += '</td><td>';
+            htmlStr += ds.data[i].permission.perName;
+            htmlStr += '</td><td class="td-status">';
+            htmlStr += "<span class=\"layui-btn layui-btn-normal layui-btn-mini\">"
+            htmlStr += ds.data[i].status;
+            htmlStr += "</span>"
+            htmlStr += '</td><td>';
+            htmlStr += "<a class=\"layui-icon\" title=\"change\" onclick=\"member_stop(this,'10001')\" href=\"javascript:;\" id=\"batteryStatus\">&#xe601;</a>"
+            htmlStr += "<a class=\"layui-icon\" title=\"Delete\" onclick=\"member_del(this,'delete id')\" href=\"javascript:;\" id=\"del\">&#xe640;</a>"
+            htmlStr += '</td></tr>'
+
+        }
+        $("#Content").append(htmlStr);
+        var tx = $("#Content").find("tr").find(".td-status").find('span');
+        btnStatus(tx);
+    }
+
+    /*权限-删除*/
+    function member_del(obj, id) {
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var tip2;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "你确定要删除吗？";
+            tip2 = "已删除!";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Are you sure you want to delete？";
+            tip2 = "deleted!";
+            alertTip = "Permission Denied！";
+        }
+
+        layer.confirm(tip1, function (index) {
+            //发异步删除数据
+            // $(obj).parents("tr").remove();
+            // layer.msg('已删除!',{icon:1,time:1000});
+
+            var arr = [];
+            var td = obj.parentNode.parentNode;
+            $(td).each(function () {
+                var res = $(this).children('td').eq(1).html();
+                arr.push(res);
+            })
+            var pid = Number(arr);
+
+            var name = sessionStorage.getItem('loginName');
+            var pwd = sessionStorage.getItem('loginPwd');
+            var token = localStorage.getItem("tokenId");
+            $.ajax({
+                url: '/backManager/deletePer',
+                type: "POST",
+                data: {_method: "DELETE", 'id': pid},
+                headers: {		//这里将存储的token取出发送至后端
+                    TOKEN: token,
+                    NAME: name,
+                    PWD: pwd,
+                    LANG: currLang
+                },
+                success: function (data, textStatus, request) {
+                    let tokenId = request.getResponseHeader("TOKEN")
+                    window.localStorage.tokenId = tokenId;
+
+                    if (data.msg != alertTip) {
+                        $(obj).parents("tr").remove();
+                        layer.msg(tip2, {icon: 1, time: 1000});
+                    } else {
+                        layer.alert(data.msg);
+                    }
+                },
+                error: function (xhr) {
+                    var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                    if (xhr.status == 401) {
+                        layer.alert(obj.msg, function (index) {
+                            top.location.href = '../login.html'
+                        });
+                    }
+                }
+            });
+        });
+    }
+
+
+    //设置初始状态颜色
+    function btnStatus(obj) {
+        var arr = [];
+        for (var i = 0; i < obj.length; i++) {
+            arr[i] = obj[i];
+            var tx = $(arr[i]).text();
+            if (tx == 'Unused') {
+                $(arr[i]).addClass('layui-btn-disabled');
+            }
+
+        }
+    }
+
+    /*用户-停用*/
+    function member_stop(obj, id) {
+
+        var currLang = localStorage.currentLang;
+        var tip1;
+        var tip2;
+        var tip3;
+        var alertTip;
+        if (currLang == "ch") {
+            tip1 = "你确定要更改吗？";
+            tip2 = "已停用!";
+            tip3 = "已启用!";
+            alertTip = "你没有权限！";
+        } else {
+            tip1 = "Are you sure you want to change？";
+            tip2 = "terminated!";
+            tip3 = "activated!";
+            alertTip = "Permission Denied！";
+        }
+
+        var arr = "";
+        var brr = "";
+        var drr = [];
+        var td = obj.parentNode.parentNode;
+        $(td).each(function () {
+            var res = $(this).children('td').eq(6).html();
+            var des = $(this).children('td').eq(0).html();
+            var bes = $(this).children('td').eq(2).html();
+            arr = res;
+            brr = bes;
+            drr.push(des);
+        })
+
+        var div = document.createElement('div');
+        div.innerHTML = arr;
+        var span = div.childNodes[0];
+        var tt = $(span).text();
+
+        div.innerHTML = brr;
+        var span = div.childNodes[0];
+        var role = $(span).text();
+
+        var bid = Number(drr);
+
+        layer.confirm(tip1, function (index) {
+            if (tt == 'Using') {
+
+                // var s1 = $(obj).parents("tr").find(".td-status").find('span').html();
+                var s1 = 'Unused';
+                var name = sessionStorage.getItem('loginName');
+                var pwd = sessionStorage.getItem('loginPwd');
+                var token = localStorage.getItem("tokenId");
+
+                var deleteStatus = 0;
+
+                $.ajax({
+                    url: '/backManager/permissionStatus',
+                    type: "POST",
+                    data: {_method: "PUT", 'id': bid, 'role': role, 'status': s1, 'delete_status': deleteStatus},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    success: function (data, textStatus, request) {
+
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        if (data.msg != alertTip) {
+                            //发异步把用户状态进行更改
+                            $(obj).attr('value', 'Unused')
+                            $(obj).find('i').html('&#xe62f;');
+                            $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('Unused');
+                            layer.msg(tip2, {icon: 5, time: 1000});
+                        } else {
+                            layer.alert(data.msg);
+                        }
+
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../login.html'
+                            });
+                        }
+                    }
+                });
+            } else {
+
+                // var s2 = $(obj).parents("tr").find(".td-status").find('span').html();
+                var s2 = 'Using';
+                var name = sessionStorage.getItem('loginName');
+                var pwd = sessionStorage.getItem('loginPwd');
+                var token = localStorage.getItem("tokenId");
+
+                var deleteStatus = 1;
+
+                $.ajax({
+                    url: '/backManager/permissionStatus',
+                    type: "POST",
+                    data: {_method: "PUT", 'id': bid, 'role': role, 'status': s2, 'delete_status': deleteStatus},
+                    headers: {		//这里将存储的token取出发送至后端
+                        TOKEN: token,
+                        NAME: name,
+                        PWD: pwd,
+                        LANG: currLang
+                    },
+                    success: function (data, textStatus, request) {
+                        let tokenId = request.getResponseHeader("TOKEN")
+                        window.localStorage.tokenId = tokenId;
+
+                        if (data.msg != alertTip) {
+                            //发异步把用户状态进行更改
+                            $(obj).attr('value', 'Using')
+                            $(obj).find('i').html('&#xe601;');
+                            $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('Using');
+                            layer.msg(tip3, {icon: 6, time: 1000});
+                        } else {
+                            layer.alert(data.msg);
+                        }
+                    },
+                    error: function (xhr) {
+                        var obj = JSON.parse(xhr.responseText); //由JSON字符串转换为JSON对象
+                        if (xhr.status == 401) {
+                            layer.alert(obj.msg, function (index) {
+                                top.location.href = '../login.html'
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    //添加弹出层
+    function x_add_show(title, url, w, h) {
+
+        var currLang = localStorage.currentLang;
+        if (currLang == "ch")
+            title = "添加";
+        else
+            title = "Add";
+
+        if (title == null || title == '') {
+            title = false;
+        }
+        ;
+        if (url == null || url == '') {
+            url = "404.html";
+        }
+        ;
+        if (w == null || w == '') {
+            w = ($(window).width() * 0.6);
+        }
+        ;
+        if (h == null || h == '') {
+            h = ($(window).height() - 120);
+        }
+        ;
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade: 0.4,
+            title: title,
+            content: url
+        });
+    }
+
+    /*关闭弹出框口*/
+    function x_admin_close() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+
+    //JS文本翻译
+    $(function () {
+        //获取语言
+        var currLang = localStorage.currentLang;
+        //定义多语言数组
+        var msg = new Array();
+        //定义多语言中文
+        msg["ch"] = "一二";
+        //定义多语言英文
+        msg["en"] = "AAAA";
+        // console.log(msg[currLang]);
+    });
+
+</script>
+<script type="text/javascript" src="../language/lang_switch.js"></script>
+<script type="text/javascript" src="../language/lang/batteryReview_ch.js"></script>
+<script type="text/javascript" src="../language/lang/batteryReview_en.js"></script>
+</body>
+
+</html>

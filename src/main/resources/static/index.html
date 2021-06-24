@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title data-action="name">index</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+    <link rel="shortcut icon" href="#"/>
+    <!--    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />-->
+    <link rel="stylesheet" href="css/font.css">
+    <link rel="stylesheet" href="css/xadmin.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/xadmin.js"></script>
+
+</head>
+<body>
+<!-- 顶部开始 -->
+<div class="container">
+    <div class="logo"><a href="index.html" data-action="Title">Backstage Management</a></div>
+    <div class="left_open">
+        <i class="iconfont">&#xe699;</i>
+    </div>
+    <ul class="layui-nav left fast-add" lay-filter=""></ul>
+    <ul class="layui-nav right" lay-filter="">
+
+        <li class="layui-nav-item">
+            <a id="alarm" href="">
+                <i class="iconfont">&#xe6b6;</i>
+                <!--                    <span class="layui-badge">9</span>-->
+            </a>
+        </li>
+
+
+        <li class="layui-nav-item">
+            <a id="message" class="iconfont" href="">
+                <i class="iconfont">&#xe69b;</i>
+                <!--                    <span class="layui-badge-dot"></span>-->
+            </a>
+        </li>
+
+
+        <li class="layui-nav-item">
+            <!--              <input id="usernameM" type="hidden" th:text="${param.username}" />-->
+            <a id="usernameN" href="javascript:;"></a>
+            <dl class="layui-nav-child">
+                <dd><a href="javascript:;"
+                       onclick="x_admin_show('Personal Information','html/userChangeInformation.html')"
+                       data-action="PerInfo">Personal information</a></dd>
+                <dd><a href="login.html" data-action="Exit">Exit</a></dd>
+            </dl>
+        </li>
+    </ul>
+
+</div>
+<!-- 顶部结束 -->
+<!-- 中部开始 -->
+<!-- 左侧菜单开始 -->
+<div class="left-nav">
+    <div id="side-nav">
+        <ul id="nav">
+            <li>
+                <a href="javascript:;" _href="html/welcome.html">
+                    <i class="iconfont">&#xe6eb;</i>
+                    <cite data-action="Home">Home</cite>
+                </a>
+            </li>
+
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe6e4;</i>
+                    <cite data-action="RentalManagement">Rental Management</cite>
+                    <i class="iconfont nav_right">&#xe6a7;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="html/applyTenantApplication.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="TenantApplication">Tenant Application</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/applyAudit.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="ApplicationAudit">Application Audit</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/applyTenantManagement.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="TenantManagement">Tenant Management</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe758;</i>
+                    <cite data-action="CostManagement">Cost Management</cite>
+                    <i class="iconfont nav_right">&#xe6a7;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="html/costTenant.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="TenantCost">Tenant Cost</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/costAccountManage.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="AccountManagement">Account Management</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/costArrears.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="ArrearsManagement">Arrears Management</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe6d4;</i>
+                    <cite data-action="BatteryInformation">Battery Information</cite>
+                    <i class="iconfont nav_right">&#xe6a7;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="html/batteryRecord.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="MaintenanceRecord">Maintenance Record</cite>
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a _href="html/statisticMileage.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="temp">信息查改</cite>
+                        </a>
+                    </li >
+
+
+                    <li>
+                        <a _href="html/batteryReview.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="AnnualReview">Annual Review</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe70e;</i>
+                    <cite data-action="BatteryMonitoring">Battery Monitoring</cite>
+                    <i class="iconfont nav_right">&#xe6a7;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="html/monitorLocation.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="LocationServices">Location Services</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/monitorRoute.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="RoutePlayback">Route Playback</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/monitorFence.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="ElectronicFence">Electronic Fence</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/monitorPeccancy.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="PeccancyRecord">Peccancy Record</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe70c;</i>
+                    <cite data-action="StatisticalReport">Statistical Report</cite>
+                    <i class="iconfont nav_right">&#xe6a7;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="html/statisticMileage.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="Mileage">Mileage</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/statisticStoppage.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="StoppageReport">Stoppage Report</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/statisticOperate.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="OperatingReport">Operating Report</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/statisticAlarm.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="AlertReport">Alert Report</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/statisticInstruction.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="InstructionReport">Instruction Report</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/statisticSMS.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="SMSReminding">SMS reminding</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe726;</i>
+                    <cite data-action="User&Role">User&Role</cite>
+                    <i class="iconfont nav_right">&#xe6a7;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="html/userSub.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="SubUser">Sub-User</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/userRoleManage.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="RoleManagement">Role Management</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/userManage.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="UserManagement">Management User</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe698;</i>
+                    <cite data-action="InventoryManagement">Inventory Management</cite>
+                    <i class="iconfont nav_right">&#xe6a7;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="html/manageBattery.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="BatteryManagement">Battery Management</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/manageDevice.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="DeviceManagement">Device Management</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/manageSIM.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="SIMManagement">SIM Management</cite>
+                        </a>
+                    </li>
+                    <li>
+                        <a _href="html/manageIC.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite data-action="ICManagement">IC Management</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- <div class="x-slide_left"></div> -->
+<!-- 左侧菜单结束 -->
+<!-- 右侧主体开始 -->
+<div class="page-content">
+    <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+        <ul class="layui-tab-title">
+            <li class="home">
+                <i class="layui-icon">&#xe68e;</i>
+                <i data-action="index">Index</i>
+            </li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <iframe src='html/welcome.html' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-content-bg"></div>
+
+<script>
+
+    $(document).ready(function () {
+        var name = sessionStorage.getItem('loginName');
+        $("#usernameN").text(name);
+    });
+
+    /*弹出层*/
+    /*
+        参数解释：
+        title   标题
+        url     请求的url
+        id      需要操作的数据id
+        w       弹出层宽度（缺省调默认值）
+        h       弹出层高度（缺省调默认值）
+    */
+    function x_admin_show(title, url, w, h) {
+
+        var currLang = localStorage.currentLang;
+        if (currLang == "ch")
+            title = "修改信息";
+        else
+            title = "Personal Information";
+
+        if (title == null || title == '') {
+            title = false;
+        }
+        ;
+        if (url == null || url == '') {
+            url = "404.html";
+        }
+        ;
+        if (w == null || w == '') {
+            w = ($(window).width() * 0.6);
+        }
+        ;
+        if (h == null || h == '') {
+            h = ($(window).height() - 120);
+        }
+        ;
+        // console.log(per)
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false, //不固定
+            maxmin: true,
+            shadeClose: true,
+            shade: 0.4,
+            title: title,
+            content: url
+        });
+    }
+
+    /*关闭弹出框口*/
+    function x_admin_close() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+
+    //JS文本翻译
+    $(function () {
+        //获取语言
+        var currLang = localStorage.currentLang;
+
+        var per;
+        if (currLang == "ch")
+            per = "修改信息";
+        else
+            per = "Quantity";
+
+        //定义多语言数组
+        var msg = new Array();
+        //定义多语言中文
+        msg["ch"] = "一二";
+        //定义多语言英文
+        msg["en"] = "AAAA";
+        // console.log(msg[currLang]);
+    });
+
+</script>
+<script type="text/javascript" src="language/lang_switch.js"></script>
+<script type="text/javascript" src="language/lang/index_ch.js"></script>
+<script type="text/javascript" src="language/lang/index_en.js"></script>
+</body>
+</html>
